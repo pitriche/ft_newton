@@ -13,7 +13,16 @@
 #ifndef OPENGL_HPP
 # define OPENGL_HPP
 
-# include <OpenGL/gl3.h>
+#ifdef __MACH__
+ #include <OpenGL/gl3.h>
+#endif
+#ifndef __MACH__
+ #include <GL/gl.h>
+ #define GL_GLEXT_PROTOTYPES
+ #include <GL/glext.h>
+#endif
+
+
 # include "SDL.h"
 # include "Matrix.hpp"
 

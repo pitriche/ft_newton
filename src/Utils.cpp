@@ -43,51 +43,51 @@ namespace Utils
 	void		openGL_error_log(unsigned int shader, int err_code,
 				const char *filename)
 	{
-		char	buffer[512];
+		// char	buffer[512];
 
-		std::cerr << "[" << filename << "] shader compilation failed: [" <<
-		err_code << "/1]" << std::endl;
-		glGetShaderInfoLog(shader, 512, NULL, buffer);
-		std::cerr << "Compilation log:" << std::endl << buffer;
-		exit(0);
+		// std::cerr << "[" << filename << "] shader compilation failed: [" <<
+		// err_code << "/1]" << std::endl;
+		// glGetShaderInfoLog(shader, 512, NULL, buffer);
+		// std::cerr << "Compilation log:" << std::endl << buffer;
+		// exit(0);
 	}
 
 	float	round(float f, int decimal)
 	{
 		float	n;
 
-		n = std::powf(10.0f, decimal);
-		return (std::roundf(f * n) / n);
+		n = std::pow(10.0f, decimal);
+		return (std::round(f * n) / n);
 	}
 
 	/* preset colors */
 	void	draw_cube(const Matrix &model)
 	{
-		glUniformMatrix4fv(all.gl.uniform.matrix_model, 1, true, model.data());
-		glUniform1i(all.gl.uniform.color, 0x8080ff);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-		glDrawArrays(GL_TRIANGLE_FAN, 4, 4);
-		glUniform1i(all.gl.uniform.color, 0xff8080);
-		glDrawArrays(GL_TRIANGLE_FAN, 8, 4);
-		glDrawArrays(GL_TRIANGLE_FAN, 12, 4);
-		glUniform1i(all.gl.uniform.color, 0x80ff80);
-		glDrawArrays(GL_TRIANGLE_FAN, 16, 4);
-		glDrawArrays(GL_TRIANGLE_FAN, 20, 4);
+		// glUniformMatrix4fv(all.gl.uniform.matrix_model, 1, true, model.data());
+		// glUniform1i(all.gl.uniform.color, 0x8080ff);
+		// glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+		// glDrawArrays(GL_TRIANGLE_FAN, 4, 4);
+		// glUniform1i(all.gl.uniform.color, 0xff8080);
+		// glDrawArrays(GL_TRIANGLE_FAN, 8, 4);
+		// glDrawArrays(GL_TRIANGLE_FAN, 12, 4);
+		// glUniform1i(all.gl.uniform.color, 0x80ff80);
+		// glDrawArrays(GL_TRIANGLE_FAN, 16, 4);
+		// glDrawArrays(GL_TRIANGLE_FAN, 20, 4);
 	}
 
 	/* set colors */
 	void	draw_cube(const Matrix &model, unsigned top_bot,
 		unsigned left_right, unsigned far_near)
 	{
-		glUniformMatrix4fv(all.gl.uniform.matrix_model, 1, true, model.data());
-		glUniform1i(all.gl.uniform.color, (GLint)top_bot);
-		glDrawArrays(GL_TRIANGLE_FAN, 8, 4);
-		glDrawArrays(GL_TRIANGLE_FAN, 12, 4);
-		glUniform1i(all.gl.uniform.color, (GLint)left_right);
-		glDrawArrays(GL_TRIANGLE_FAN, 16, 4);
-		glDrawArrays(GL_TRIANGLE_FAN, 20, 4);
-		glUniform1i(all.gl.uniform.color, (GLint)far_near);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-		glDrawArrays(GL_TRIANGLE_FAN, 4, 4);
+		// glUniformMatrix4fv(all.gl.uniform.matrix_model, 1, true, model.data());
+		// glUniform1i(all.gl.uniform.color, (GLint)top_bot);
+		// glDrawArrays(GL_TRIANGLE_FAN, 8, 4);
+		// glDrawArrays(GL_TRIANGLE_FAN, 12, 4);
+		// glUniform1i(all.gl.uniform.color, (GLint)left_right);
+		// glDrawArrays(GL_TRIANGLE_FAN, 16, 4);
+		// glDrawArrays(GL_TRIANGLE_FAN, 20, 4);
+		// glUniform1i(all.gl.uniform.color, (GLint)far_near);
+		// glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+		// glDrawArrays(GL_TRIANGLE_FAN, 4, 4);
 	}
 }

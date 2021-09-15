@@ -13,6 +13,7 @@
 #include "Time.hpp"
 #include <unistd.h>
 #include <ctime>	/* clock_gettime_nsec_np, nanosleep */
+// #include <time.h>	/* clock_gettime_nsec_np, nanosleep */
 
 /* no more than MAX_SAMPLE_AVERAGE samples */
 Time::Time(void) : delta(0), _min_delta(0), _old_ts(timestamp()),
@@ -109,7 +110,7 @@ unsigned long	Time::timestamp(void)
 	struct timespec ts;
 
 	//clock_gettime(CLOCK_MONOTONIC, &ts); // REQUIRES TESTING ON LINUX
-	clock_gettime(CLOCK_UPTIME_RAW, &ts);
+	// clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
 	return (static_cast<unsigned long>(ts.tv_sec) * 1000000000UL +
 		static_cast<unsigned long>(ts.tv_nsec));
 	#endif

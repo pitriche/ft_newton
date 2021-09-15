@@ -41,7 +41,14 @@ main.cpp	\
 
 # **************************************************************************** #
 
-CC = clang++
+# if linux
+CC = g++
+
+# if macos
+ifeq ($(uname), Darwin)
+	CC = clang++
+endif
+
 
 FL_OPTI = -O3 -flto
 FLAGS = -Wall -Wextra -Wconversion -Wunused -std=c++11 $(FL_OPTI) \
@@ -49,9 +56,11 @@ FLAGS = -Wall -Wextra -Wconversion -Wunused -std=c++11 $(FL_OPTI) \
 # MacOS is a demon spawned low class abomination. There are no words in the
 # tongues of men to describe exactly how much i hate apple for doing this
 
+
 CFLAGS = -c $(FLAGS)
 
-FRAMEWORKS = -framework OpenGL -lSDL2 -LLibrary/lib
+# add opengl here
+FRAMEWORKS = -lSDL2 -LLibrary/lib -ldl -lpthread
 
 CINCLUDE = -I include -I Library/include/SDL2
 
@@ -70,7 +79,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ_DIR) $(OBJ)
 	@echo "$(GREEN)objects done sir !$(RESET)"
-	@$(CC) $(FRAMEWORKS) -o $(NAME) $(OBJ)
+	$(CC)  $(OBJ) $(FRAMEWORKS) $(CINCLUDE) -o $(NAME)
 	@echo "$(GREEN)$(NAME) compiled sir !$(RESET)"
 
 $(OBJ_DIR)%.o : $(SRC_DIR)%.cpp $(INCLUDE)

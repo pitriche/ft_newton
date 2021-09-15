@@ -10,12 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Display.hpp"
+
+#ifdef __MACH__
+ #include <OpenGL/gl3.h>
+#endif
+#ifndef __MACH__
+ #include <GL/gl.h>
+ #define GL_GLEXT_PROTOTYPES
+ #include <GL/glext.h>
+#endif
+
 #include "All.hpp"
-
+#include "Display.hpp"
 #include "Defines.hpp"	/* OPENGL defines */
-#include <OpenGL/gl3.h>	/* opengl functions */
-
 #include "Utils.hpp"	/* draw_cube */
 
 Display::Display(void) : window(0) { }
