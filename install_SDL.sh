@@ -1,12 +1,12 @@
 #!/bin/sh
 
-mkdir Library
 LIBPATH=$PWD/Library
 
-git clone https://github.com/libsdl-org/SDL $LIBPATH/SDL_install
-rm -rf $LIBPATH/SDL_install/.git
-mkdir $LIBPATH/SDL_install/build
-cd $LIBPATH/SDL_install/build
+cd $LIBPATH
+rm -rf bin include lib SDL share
+tar -xf SDL.tgz
+mkdir SDL/build
+cd SDL/build
 ../configure --prefix=$LIBPATH
 make
 make install
