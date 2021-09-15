@@ -1,0 +1,29 @@
+build/SDL_mixer.lo: \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/audio/SDL_mixer.c \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/audio/../SDL_internal.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/audio/../dynapi/SDL_dynapi.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/audio/../dynapi/SDL_dynapi_overrides.h \
+ include/SDL_config.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_platform.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/begin_code.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/close_code.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_assert.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_config.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_log.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_stdinc.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_cpuinfo.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_timer.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_error.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_audio.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_endian.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_mutex.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_thread.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_atomic.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_platform.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_rwops.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/audio/SDL_sysaudio.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_mutex.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_thread.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/audio/../SDL_dataqueue.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/audio/./SDL_audio_c.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/audio/./../SDL_internal.h

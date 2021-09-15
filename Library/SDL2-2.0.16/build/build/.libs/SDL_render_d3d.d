@@ -1,0 +1,27 @@
+build/SDL_render_d3d.lo: \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/render/direct3d/SDL_render_d3d.c \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/render/direct3d/../../SDL_internal.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/render/direct3d/../../dynapi/SDL_dynapi.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/render/direct3d/../../dynapi/SDL_dynapi_overrides.h \
+ include/SDL_config.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_platform.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/begin_code.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/close_code.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_assert.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_config.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_log.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_stdinc.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_render.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_rect.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_error.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_pixels.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_endian.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_rwops.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_video.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_surface.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_blendmode.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_system.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_keyboard.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_keycode.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_scancode.h \
+ /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_render.h
