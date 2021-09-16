@@ -1,0 +1,26 @@
+build/SDL_syshaptic.lo: \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/src/haptic/darwin/SDL_syshaptic.c \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/src/haptic/darwin/../../SDL_internal.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/src/haptic/darwin/../../dynapi/SDL_dynapi.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/src/haptic/darwin/../../dynapi/SDL_dynapi_overrides.h \
+  include/SDL_config.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/include/SDL_platform.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/include/begin_code.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/include/close_code.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/include/SDL_assert.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/include/SDL_config.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/include/SDL_log.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/include/SDL_stdinc.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/include/SDL_haptic.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/include/SDL_error.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/include/SDL_joystick.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/src/haptic/darwin/../SDL_syshaptic.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/src/haptic/darwin/../../joystick/SDL_sysjoystick.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/src/haptic/darwin/../../joystick/../SDL_internal.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/src/haptic/darwin/../../joystick/SDL_joystick_c.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/include/SDL_gamecontroller.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/include/SDL_rwops.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/include/SDL_sensor.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/src/haptic/darwin/../../joystick/darwin/SDL_iokitjoystick_c.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/src/haptic/darwin/../../joystick/darwin/../../SDL_internal.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL_install/src/haptic/darwin/SDL_syshaptic_c.h

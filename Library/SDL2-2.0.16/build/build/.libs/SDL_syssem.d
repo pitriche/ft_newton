@@ -1,19 +1,21 @@
 build/SDL_syssem.lo: \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/thread/pthread/SDL_syssem.c \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/thread/pthread/../../SDL_internal.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/thread/pthread/../../dynapi/SDL_dynapi.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/thread/pthread/../../dynapi/SDL_dynapi_overrides.h \
- include/SDL_config.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_platform.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/begin_code.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/close_code.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_assert.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_config.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_log.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_stdinc.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_thread.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_error.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_atomic.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_platform.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_mutex.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_timer.h
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/thread/pthread/SDL_syssem.c \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/thread/pthread/../../SDL_internal.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/thread/pthread/../../dynapi/SDL_dynapi.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/thread/pthread/../../dynapi/SDL_dynapi_overrides.h \
+  include/SDL_config.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_platform.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/begin_code.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/close_code.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_assert.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_config.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_log.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_stdinc.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_thread.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_error.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_atomic.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_mutex.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_timer.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/thread/pthread/../generic/SDL_syssem.c \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/thread/pthread/../generic/../../SDL_internal.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/thread/pthread/../generic/SDL_systhread_c.h

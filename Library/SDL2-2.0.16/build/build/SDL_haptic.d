@@ -1,24 +1,23 @@
 build/SDL_haptic.lo: \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/SDL_haptic.c \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/../SDL_internal.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/../dynapi/SDL_dynapi.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/../dynapi/SDL_dynapi_overrides.h \
- include/SDL_config.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_platform.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/begin_code.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/close_code.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_assert.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_config.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_log.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_stdinc.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/SDL_syshaptic.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_haptic.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_error.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_joystick.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/SDL_haptic_c.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/../joystick/SDL_joystick_c.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/../joystick/../SDL_internal.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_gamecontroller.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_rwops.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_sensor.h \
- /mnt/nfs/homes/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_joystick.h
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/SDL_haptic.c \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/../SDL_internal.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/../dynapi/SDL_dynapi.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/../dynapi/SDL_dynapi_overrides.h \
+  include/SDL_config.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_platform.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/begin_code.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/close_code.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_assert.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_config.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_log.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_stdinc.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/SDL_syshaptic.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_haptic.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_error.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_joystick.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/SDL_haptic_c.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/../joystick/SDL_joystick_c.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/src/haptic/../joystick/../SDL_internal.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_gamecontroller.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_rwops.h \
+  /Users/pitriche/ex/ft_newton/Library/SDL2-2.0.16/include/SDL_sensor.h
