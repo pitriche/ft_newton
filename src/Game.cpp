@@ -6,195 +6,160 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/08/27 16:10:43 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/05 17:41:26 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Game.hpp"
 #include "All.hpp"
 
-/* ########################################################################## */
-/* #########################		Sector			######################### */
-/* ########################################################################## */
-
-Sector::Sector(void) : nb(0), pos(SECTOR_LENGTH) { }
-
-Sector	&Sector::operator=(const Sector &rhs)
-{
-	this->nb = rhs.nb;
-	this->pos = rhs.pos;
-	this->cube_pos = rhs.cube_pos;
-	this->cube_size = rhs.cube_size;
-	return (*this);
-}
-
-bool	Sector::check_collision(float pos_x, float pos_y, float crouch)
-{
-	vec3	pos;
-	float	size;
-
-	for (unsigned i = 0; i < this->nb; ++i)
-	{
-		pos = this->cube_pos[i];
-		pos[2] += this->pos;
-		pos[1] += 0.85f - (0.3f - crouch);
-		size = this->cube_size[i] + 0.2f;							/* + character's size */
-		if (pos[2] - size < 0.0f && pos[2] + size > 0.0f)			/* depth */
-			if (pos[0] - size < pos_x && pos[0] + size > pos_x)		/* lateral */
-				if (pos[1] - size < pos_y && pos[1] + size > pos_y)	/* vertical */
-				return (true);
-	}
-	return(false);
-}
-
-/* ########################################################################## */
-/* #########################		Game			######################### */
-/* ########################################################################## */
-
-Game::Game(void) { }
+Game::Game(void) : game_speed(1.0f), gravity(9.80665f) { }
 Game::~Game(void) { }
-
-static void	_push_cube(Sector &sec, enum e_x x, enum e_y y, float z)
-{
-	static const float	eq_x[3] = {-1.5f, 0.0f, 1.5f};
-	static const float	eq_y[5] = {-1.3f, -1.0f, -0.5f, 0.0f, 0.5f};
-
-	if (y != tall)
-		sec.cube_pos.push_back({eq_x[x], eq_y[y], z});
-	else
-	{
-		sec.cube_pos.push_back({eq_x[x], -0.5, z});
-		sec.cube_pos.push_back({eq_x[x], 0.5, z});
-	}
-	
-}
-
-static void	_complete_sector(Sector &sec)
-{
-	sec.nb = (unsigned)sec.cube_pos.size();
-	sec.cube_size.resize(sec.nb);
-	for (float &size : sec.cube_size)
-		size = 0.5f;
-}
-
-static Sector	_random_sector(int nb_cubes)
-{
-	Sector	sec;
-
-	for (unsigned i = 0; i < (unsigned)nb_cubes; ++i)
-	{
-		_push_cube(sec, (enum e_x)(rand() % 3), (enum e_y)(rand() % 5), -rand() % 50);
-		if (sec.cube_pos.back()[0] == 0.0f && sec.cube_pos.back()[1] == 0.5f)
-			sec.cube_pos.pop_back();
-	}
-	_complete_sector(sec);
-	return(sec);
-}
-
-/* ########################################################################## */
 
 void	Game::init(void)
 {
-	this->pos_x = 0.0f;
-	this->pos_y = 0.0f;
-	this->input_left = 0;
-	this->input_right = 0;
+	Object	tmp;
 
-	this->game_speed = Z_SPEED;
-	this->distance = 0.0f;
+	/* initial camera position, unlocked */
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+	this->pos[2] = -4.0f;
+	this->pos[1] = 1.0f;
+	this->pos_locked = 8.0f;
 
-	this->life = LIFE_BAR;
+	tmp.type = Cube;
+	tmp.mass = 1;
+	tmp.position = {-1, 2.2f, 0};
+	tmp.velocity = {0, 0, 0};
+	tmp.angular_position = {0, 0, 0};
+	tmp.angular_velocity = {1.4f, 1.3f, 1.5f};
+	// tmp.dimension = {1, 1, 1};
+	this->obj.push_back(tmp);
 
-	this->sector = _random_sector(15);
-	this->sector_next = _random_sector(18);
-	this->sector.pos += 10.0f;
-	this->sector_next.pos += SECTOR_LENGTH + 10.0f;
+	tmp.type = Sphere;
+	tmp.diameter = 0.1f;
+	const int MULT = 13;
+	for (unsigned k = 0; k < MULT; ++k)
+		for (unsigned j = 0; j < MULT; ++j)
+			for (unsigned i = 0; i < MULT; ++i)
+			{
+				tmp.position = {k * 1.0f, j * 1.0f + 5.0f, i * 1.0f};
+				this->obj.push_back(tmp);
+			}
+
+	// tmp.position = {1, -1, 0};
+	// tmp.angular_velocity = {0, 0, 1};
+	// tmp.diameter = 1;
+	// this->obj.push_back(tmp);
+
+	// tmp.position = {0, 0.5, 0};
+	// tmp.angular_velocity = {0.3f, 0.5f, 0.8f};
+	// tmp.diameter = 1;
+	// this->obj.push_back(tmp);
+
+	// /* cardinal boxes */
+	tmp.type = Cube;
+	tmp.position = {3, 0, 0};
+	tmp.angular_velocity = {0, 0, 0};
+	tmp.dimension = {2, 0.5f, 0.5f};
+	this->obj.push_back(tmp);
+
+	tmp.position = {0, 0, 3};
+	tmp.dimension = {0.2f, 0.2f, 4};
+	this->obj.push_back(tmp);
+
+
+	tmp.position = {0, 3, 0};
+	tmp.dimension = {0.6f, 3, 0.6f};
+	this->obj.push_back(tmp);
+
+
+	// tmp.type = Sphere;
+	// tmp.position = {0, 2, 0};
+	// tmp.velocity = {0, 0, 0};
+	// tmp.diameter = 10;
+	// this->obj.push_back(tmp);
+
+	tmp.type = Cube;
+	tmp.position = {2, 2, 0};
+	tmp.dimension = {1, 1, 1};
+	this->obj.push_back(tmp);
 }
 
 /* ########################################################################## */
 
-void		Game::_update_sectors(float delta)
+void		Game::_update_camera(float delta, const Keys &key)
 {
-	this->sector.pos -= delta * this->game_speed;
-	this->sector_next.pos -= delta * this->game_speed;
+	float	delta_x;
+	float	delta_z;
 
-	if (this->sector.pos < -6)
+	/* lock - unlock camera and cursor */
+	if (this->camera_lock != (enum e_camera)key.mouse_middle)
 	{
-		this->sector = this->sector_next;
-		this->sector_next = _random_sector(20);
-		this->sector_next.pos += SECTOR_LENGTH;
+		this->camera_lock = key.mouse_middle ? Locked : Unlocked;
+		if (this->camera_lock == Unlocked)
+			SDL_SetRelativeMouseMode(SDL_TRUE);
+		else if (this->camera_lock == Locked)
+			SDL_SetRelativeMouseMode(SDL_FALSE);
 	}
+
+	/* set then cap look angles */
+	this->look_yaw += (key.mouse_x * MOUSE_SENSITIVITY_X) / 100000.0f;
+	this->look_pitch += (key.mouse_y * MOUSE_SENSITIVITY_Y) / 100000.0f;
+	if (this->look_pitch < -LOOK_CAP_PITCH)
+		this->look_pitch = -LOOK_CAP_PITCH;
+	if (this->look_pitch > LOOK_CAP_PITCH)
+		this->look_pitch = LOOK_CAP_PITCH;
+	if (this->camera_lock == Locked && this->look_pitch < LOOK_CAP_PITCH_LOCK)
+		this->look_pitch = LOOK_CAP_PITCH_LOCK;
+
+	/* set and cap positions */
+	this->pos[1] += (unsigned)key.space * delta * CAMERA_SPEED -
+	(unsigned)key.lshift * delta * CAMERA_SPEED;
+	if (this->pos[1] < POS_CAP_Y)
+		this->pos[1] = POS_CAP_Y;
+	
+	delta_x = (unsigned)key.d * delta * CAMERA_SPEED -
+	(unsigned)key.a * delta * CAMERA_SPEED;
+	delta_z = (unsigned)key.w * delta * CAMERA_SPEED -
+	(unsigned)key.s * delta * CAMERA_SPEED;
+	this->pos[0] += delta_z * sinf(this->look_yaw) +
+	delta_x * sinf(this->look_yaw + (float)M_PI_2);
+	this->pos[2] += delta_z * cosf(this->look_yaw) +
+	delta_x * cosf(this->look_yaw + (float)M_PI_2);
+
+	this->pos_locked += key.mouse_scroll / 1000.0f * SCROLL_SENSITIVITY;
+	if (this->pos_locked < 0)
+		this->pos_locked = 0;
 }
 
-bool		Game::_check_collision(void)
+void		Game::_update_objects(float delta, const Keys &key)
 {
-	return (this->sector.check_collision(this->pos_x, this->pos_y, this->crouch)
-		|| this->sector_next.check_collision(this->pos_x, this->pos_y,
-		this->crouch));
-}
+	(void)key;
 
-/* ########################################################################## */
+	for (Object &obj : this->obj)
+	{
+		obj.position[0] += obj.velocity[0] * delta * this->game_speed;
+		obj.position[1] += obj.velocity[1] * delta * this->game_speed;
+		obj.position[2] += obj.velocity[2] * delta * this->game_speed;
+		obj.angular_position[0] += obj.angular_velocity[0] * delta * this->game_speed;
+		obj.angular_position[1] += obj.angular_velocity[1] * delta * this->game_speed;
+		obj.angular_position[2] += obj.angular_velocity[2] * delta * this->game_speed;
+	}
+
+	/* wiggle all */
+	// this->obj[2].position[0] = sinf(all.time.elapsed_frame() / 20.0f) * 4.8f;
+	// this->obj[2].position[2] = cosf(all.time.elapsed_frame() / 20.0f) * 4.8f;
+	// this->obj[1].position[0] = 1 + cosf(all.time.elapsed_frame() / 60.0f) * 1.8f;
+	// this->obj[1].position[1] = sinf(all.time.elapsed_frame() / 60.0f) * 1.8f;
+	// this->obj[2].dimension[0] = sinf(all.time.elapsed_frame() / 10.0f) * 1.8f;
+	// this->obj[2].dimension[1] = cosf(all.time.elapsed_frame() / 8.0f) * 2.3f;
+	// this->obj[2].dimension[2] = -cosf(all.time.elapsed_frame() / 3.0f) * 5.0f;
+}
 
 void		Game::update(float delta, const Keys &key)
 {
-	float	disp_x;
-
-	/* lateral movements */
-	disp_x = delta * X_SPEED;
-	if (this->input_left && this->pos_x > -1.5f)
-	{
-		this->pos_x -= disp_x;
-		if (this->pos_x < -1.5f)
-			this->pos_x = -1.5f;
-		if (this->pos_x <= 0.0f && this->pos_x + disp_x > 0.0f)
-		{
-			this->pos_x = 0.0f;
-			this->input_left--;
-		}
-	}
-	else if (this->input_right && this->pos_x < 1.5f)
-	{
-		this->pos_x += disp_x;
-		if (this->pos_x > 1.5f)
-			this->pos_x = 1.5f;
-		if (this->pos_x >= 0.0f && this->pos_x - disp_x < 0.0f)
-		{
-			this->pos_x = 0.0f;
-			this->input_right--;
-		}
-	}
-
-	/* jump */
-	if ((key.space || key.up || key.w) && this->pos_y <= 0.0f && crouch == 0.0f)
-	{
-		this->pos_y = 0.01f;
-		this->vel_y = 8.0f;
-	}
-	if (this->pos_y > 0.0f)
-	{
-		this->pos_y += delta * this->vel_y;
-		this->vel_y -= delta * 35.0f;
-		if (this->pos_y < 0.0f)
-			this->pos_y = 0.0f;
-	}
-
-	/* crouch */
-	this->crouch += delta * ((key.down || key.s || key.down) ? 4 : -4);
-	if (this->crouch > 0.25f)
-		this->crouch = 0.25f;
-	if (this->crouch < 0.0f)
-		this->crouch = 0.0f;
-
-	this->_update_sectors(delta);
-
-	this->distance += delta * this->game_speed;
-	this->game_speed += Z_ACCELERATION;
-	
-	if (this->_check_collision())
-		--(this->life);
-	if (!this->life)
-	{
-		std::cout << "Died ! Score : " << (int)this->distance << std::endl;
-		exit(0);
-	}
+	if (delta > MAX_DELTA)
+		delta = MAX_DELTA;
+	this->_update_camera(delta, key);
+	this->_update_objects(delta, key);
 }

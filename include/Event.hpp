@@ -17,11 +17,19 @@
 
 struct Keys
 {
-	unsigned w:1;
-	unsigned s:1;
-	unsigned up:1;
-	unsigned down:1;
-	unsigned space:1;
+	unsigned		w:1;
+	unsigned		a:1;
+	unsigned		s:1;
+	unsigned		d:1;
+	unsigned		lshift:1;
+	unsigned		space:1;
+
+	unsigned		mouse_right:1;
+	int				mouse_x;	/* only when rmb pressed if mouse_middle=1 */
+	int				mouse_y;
+	int				mouse_scroll;
+
+	unsigned		mouse_middle:1;	/* toggle, 1 for Locked 0 for Unlocked */
 };
 
 /*
@@ -40,6 +48,7 @@ struct Event
 	protected:
 	private:
 		void	_keychange(SDL_Keycode kc, unsigned key_state);
+		void	_mousechange(SDL_Keycode kc, unsigned key_state);
 
 		Event(const Event &src);
 };

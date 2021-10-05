@@ -6,13 +6,14 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:13:45 by pitriche          #+#    #+#             */
-/*   Updated: 2021/08/27 16:15:36 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/09/20 13:06:12 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MATRIX_HPP
 # define MATRIX_HPP
 
+# include "General.hpp"
 # include <iostream>
 # include <array>
 
@@ -28,8 +29,14 @@ struct Matrix : public std::array<float, 16>
 
 		void	transpose(void);
 		void	set_projection(float fov, float near, float far, float aspect);
+		
 		Matrix	&rotate(float x, float y, float z);
 		Matrix	&translate(float x, float y, float z);
+		Matrix	&scale(float x, float y, float z);
+		
+		Matrix	&rotate(const vec3 &rotation);
+		Matrix	&translate(const vec3 &translation);
+		Matrix	&scale(const vec3 &scaling);
 
 		Matrix	&operator=(const Matrix &rhs);
 		Matrix	operator*(const Matrix &rhs) const;

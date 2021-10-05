@@ -6,55 +6,22 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:13:45 by pitriche          #+#    #+#             */
-/*   Updated: 2021/08/27 15:50:12 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/09/22 14:46:20 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GAME_HPP
 # define GAME_HPP
 
+# include "General.hpp"	/* vec3 */
 # include "Event.hpp"	/* Keys */
+# include "Object.hpp"	/* Object */
 # include <vector>
-# include <array>
 
-# define	X_SPEED			10.0f
-# define	Z_SPEED			5.0f
-# define	Z_ACCELERATION	0.0025f
-# define	SECTOR_LENGTH	50
-# define	LIFE_BAR		31
-
-typedef		std::array<float, 3> vec3;
-
-enum e_x
+enum e_camera
 {
-	left,
-	cent,
-	righ
-};
-
-enum e_y
-{
-	trip,
-	jump,
-	wall,
-	head,
-	roof,
-	tall
-};
-
-struct Sector
-{
-	Sector(void);
-
-	unsigned			nb;
-	std::vector<vec3>	cube_pos;
-	std::vector<float>	cube_size;
-
-	float				pos;	/* sector position */
-
-	bool	check_collision(float pos_x, float pos_y, float crouch);
-
-	Sector	&operator=(const Sector &rhs);
+	Unlocked,
+	Locked
 };
 
 struct Game
@@ -66,27 +33,21 @@ struct Game
 		void	init(void);
 		void	update(float delta, const Keys &key);
 
-		float		game_speed;
-		float		distance;
+		enum e_camera	camera_lock;
+		vec3			pos;
+		float			pos_locked;
 
-		float		pos_x;
-		float		pos_y;
-		float		vel_y;
-		float		crouch;
+		float			look_yaw;	/* applied before pitch */
+		float			look_pitch;
 
-		unsigned	life;
+		std::vector<Object>	obj;	/* All objects */
 
-		Sector		sector;
-		Sector		sector_next;
+		float			game_speed;
+		float			gravity;
 
-		Sector		sector_bank[10];
-
-		unsigned	input_left;
-		unsigned	input_right;
-
-	private:
-		void	_update_sectors(float delta);
-		bool	_check_collision(void);
+	private :
+		void	_update_camera(float delta, const Keys &key);
+		void	_update_objects(float delta, const Keys &key);
 };
 
 #endif

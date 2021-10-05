@@ -6,14 +6,14 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/19 20:59:50 by pitriche          #+#    #+#             */
-/*   Updated: 2021/07/13 10:39:53 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/09/17 14:46:52 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ALL_HPP
 # define ALL_HPP
 
-# include "Defines.hpp"
+# include "General.hpp"
 # include "Display.hpp"
 # include "Event.hpp"
 # include "Time.hpp"

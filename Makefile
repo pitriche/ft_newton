@@ -6,7 +6,7 @@
 #    By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/07 14:21:44 by pitriche          #+#    #+#              #
-#    Updated: 2021/09/13 16:01:16 by pitriche         ###   ########.fr        #
+#    Updated: 2021/09/17 16:16:53 by pitriche         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,7 @@ Display	\
 Event	\
 Game	\
 Matrix	\
+Object	\
 OpenGL	\
 Time	\
 Utils	\
@@ -33,7 +34,7 @@ CLASSES_HEADERS= $(addsuffix .hpp, $(CLASSES))
 CLASSES_SRCS= $(addsuffix .cpp, $(CLASSES))
 
 HEADERS = $(CLASSES_HEADERS) \
-Defines.hpp	\
+General.hpp	\
 
 SRC_FILES = $(CLASSES_SRCS)	\
 main.cpp	\
@@ -41,7 +42,7 @@ main.cpp	\
 
 # **************************************************************************** #
 
-# if linux
+# if linux, it doesn't work anyway because of opengl
 CC = g++
 
 # if macos
@@ -59,8 +60,8 @@ FLAGS = -Wall -Wextra -Wconversion -Wunused -std=c++11 $(FL_OPTI) \
 
 CFLAGS = -c $(FLAGS)
 
-# add opengl here
-FRAMEWORKS = -lSDL2 -LLibrary/lib -ldl -lpthread
+FRAMEWORKS = -lSDL2 -LLibrary/lib -ldl -lpthread -framework OpenGL
+
 
 CINCLUDE = -I include -I Library/include/SDL2
 
@@ -79,7 +80,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ_DIR) $(OBJ)
 	@echo "$(GREEN)objects done sir !$(RESET)"
-	$(CC)  $(OBJ) $(FRAMEWORKS) $(CINCLUDE) -o $(NAME)
+	@$(CC)  $(OBJ) $(FRAMEWORKS) -o $(NAME)
 	@echo "$(GREEN)$(NAME) compiled sir !$(RESET)"
 
 $(OBJ_DIR)%.o : $(SRC_DIR)%.cpp $(INCLUDE)

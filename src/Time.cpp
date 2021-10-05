@@ -6,14 +6,13 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/19 21:03:42 by pitriche          #+#    #+#             */
-/*   Updated: 2021/09/13 16:02:32 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/05 13:57:34 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Time.hpp"
 #include <unistd.h>
 #include <ctime>	/* clock_gettime_nsec_np, nanosleep */
-// #include <time.h>	/* clock_gettime_nsec_np, nanosleep */
 
 /* no more than MAX_SAMPLE_AVERAGE samples */
 Time::Time(void) : delta(0), _min_delta(0), _old_ts(timestamp()),
