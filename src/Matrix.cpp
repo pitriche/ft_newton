@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/09/28 11:24:17 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/07 13:17:44 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ Matrix::Matrix(void)
 Matrix::Matrix(const Matrix &src) { *this = src; }
 Matrix::~Matrix(void) { }
 
-void	Matrix::transpose(void)
+Matrix	&Matrix::transpose(void)
 {
 	Matrix	tmp;
 
@@ -45,6 +45,7 @@ void	Matrix::transpose(void)
 	(*this)[12] = tmp[3];
 	(*this)[13] = tmp[7];
 	(*this)[14] = tmp[11];
+	return (*this);
 }
 
 void	Matrix::set_projection(float fov, float near, float far, float aspect)

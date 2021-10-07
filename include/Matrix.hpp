@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:13:45 by pitriche          #+#    #+#             */
-/*   Updated: 2021/09/20 13:06:12 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/07 13:17:41 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ struct Matrix : public std::array<float, 16>
 		Matrix(const Matrix &src);
 		virtual ~Matrix(void);
 
-		void	transpose(void);
+		Matrix	&transpose(void);
 		void	set_projection(float fov, float near, float far, float aspect);
 		
 		Matrix	&rotate(float x, float y, float z);

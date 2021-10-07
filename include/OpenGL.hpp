@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:13:45 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/04 15:14:10 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/06 15:39:13 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,13 @@ struct	VAO
 		struct _Attribute
 		{
 			GLuint	position_vertex;
+			GLuint	model_matrix_inst;
 		};
 
 	public :
 		GLuint		vao;
 		GLuint		vbo;
+		GLuint		vbo_matrix;
 		_Attribute	att;
 
 

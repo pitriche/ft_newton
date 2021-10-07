@@ -6,7 +6,7 @@
 #    By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/07 14:21:44 by pitriche          #+#    #+#              #
-#    Updated: 2021/09/17 16:16:53 by pitriche         ###   ########.fr        #
+#    Updated: 2021/10/06 11:22:13 by pitriche         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,7 @@ HEADERS = $(CLASSES_HEADERS) \
 General.hpp	\
 
 SRC_FILES = $(CLASSES_SRCS)	\
+vec3.cpp	\
 main.cpp	\
 
 

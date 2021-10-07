@@ -6,15 +6,15 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/19 21:03:42 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/05 17:42:48 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/07 18:27:39 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include <OpenGL/gl3.h>
+#include <OpenGL/gl3.h>
 
 #include "Display.hpp"
 #include "General.hpp"	/* OPENGL defines */
-
+#include "All.hpp"
 
 Display::Display(void) { }
 Display::Display(const Display &) { }
@@ -45,34 +45,62 @@ void	Display::init(void)
 
 /* ########################################################################## */
 
-#include "Utils.hpp"
-#include "All.hpp"
-
-static void	_draw_cube(const Matrix &model)
+static void	_push_matrix(std::vector<float> &mat_array, const Matrix &mat)
 {
-	glUniform1i(all.gl.uniform.object_type, 0);
-	glUniformMatrix4fv(all.gl.uniform.matrix_model, 1, true, model.data());
-	glUniform1i(all.gl.uniform.color, 0x8080ff);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	mat_array.insert(mat_array.end(), mat.begin(), mat.end());
 }
 
-static void	_draw_sphere(const Matrix &model)
+static void	_draw_objects(const Game &game)
 {
+	std::vector<float>	spheres_mat;
+	std::vector<float>	cubes_mat;
+
+	cubes_mat.reserve(game.obj.size() * 16);
+	spheres_mat.reserve(game.obj.size() * 16);
+	for (const Object &obj : game.obj)
+	{
+		switch(obj.type)
+		{
+			case Cube :
+				_push_matrix(cubes_mat, Matrix().scale(obj.dimension)
+					.rotate(obj.angular_position)
+					.translate(obj.position).transpose());
+				break ;
+			case Sphere :
+				_push_matrix(spheres_mat, Matrix().scale({obj.diameter, obj.diameter, obj.diameter})
+					.translate(obj.position).transpose());
+				break ;
+		}
+	}
+
+	/* draw cubes */
+	glBindBuffer(GL_ARRAY_BUFFER, all.gl.terrain.vbo_matrix);
+	glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(cubes_mat.size() *
+		sizeof(float)), cubes_mat.data(), GL_DYNAMIC_DRAW);
+	glUniform1i(all.gl.uniform.object_type, 0);
+	glUniform1i(all.gl.uniform.color, 0x8080ff);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 36, (GLsizei)(cubes_mat.size() /
+		16));
+	
+	/* draw spheres */
+	glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(spheres_mat.size() *
+		sizeof(float)), spheres_mat.data(), GL_DYNAMIC_DRAW);
 	glUniform1i(all.gl.uniform.object_type, 1);
-	glUniformMatrix4fv(all.gl.uniform.matrix_model, 1, true, model.data());
 	glUniform1i(all.gl.uniform.color, 0x80ff80);
-	glDrawArrays(GL_TRIANGLES, 36, 60);
+	glDrawArraysInstanced(GL_TRIANGLES, 36, 60 * 4 * 4,
+		(GLsizei)(spheres_mat.size() / 16));
 }
 
 static void	_draw_floor(void)
 {
-	Matrix model;
+	Matrix	model;
 
+	model = Matrix().scale(10000, 0, 10000);
+	glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(16 * sizeof(float)),
+		model.data(), GL_DYNAMIC_DRAW);
 	glUniform1i(all.gl.uniform.object_type, 2);
-	model.scale(10000, 0, 10000).translate(0, -0.5, 0);	/* top of cube */
-	glUniformMatrix4fv(all.gl.uniform.matrix_model, 1, true, model.data());
-	glUniform1i(all.gl.uniform.color, 0xf5f5f5);
-	glDrawArrays(GL_TRIANGLES, 30, 6);	/* top */
+	glUniform1i(all.gl.uniform.color, 0xe5e5e5);
+	glDrawArraysInstanced(GL_TRIANGLES, 30, 6, 1);
 }
 
 /* ########################################################################## */
@@ -94,26 +122,11 @@ void		Display::update(const Game &game)
 
 	/* draw objects */
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	for (const Object &obj : all.game.obj)
-	{
-		switch(obj.type)
-		{
-			case Cube :
-				_draw_cube(Matrix().scale(obj.dimension)
-					.rotate(obj.angular_position)
-					.translate(obj.position));
-				break ;
-
-			case Sphere :
-				_draw_sphere(Matrix().scale({obj.diameter, obj.diameter, obj.diameter})
-					.translate(obj.position));
-				break ;
-		}
-	}
+	_draw_objects(game);
 	_draw_floor();
 
 	glFinish();
 	SDL_GL_SwapWindow(this->window);
 
-	// std::cout << all.time.fps_average() << std::endl;
+	std::cout << all.time.fps_average() << std::endl;
 }

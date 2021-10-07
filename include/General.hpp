@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 13:52:16 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/05 13:34:58 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/07 18:03:47 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,24 @@
 # define SCROLL_SENSITIVITY		300
 
 # define LOOK_CAP_PITCH			1.55f
-# define LOOK_CAP_PITCH_LOCK	0.1f
-# define POS_CAP_Y				0.5f
+# define LOOK_CAP_PITCH_LOCK	0.02f
+# define POS_CAP_Y				0.1f
 
-# define CAMERA_SPEED			8.0f	/* in m/s */
+# define CAMERA_SPEED			5.0f	/* in m/s */
 
 # define MAX_DELTA				0.1f
 
+/* vec3 */
 typedef std::array<float, 3>	vec3;
+
+std::ostream	&operator<<(std::ostream &lhs, const vec3 &rhs);
+vec3			&operator+=(vec3 &lhs, const vec3 &rhs);
+vec3			&operator*=(vec3 &lhs, float rhs);
+float			operator*(const vec3 &lhs, const vec3 &rhs);
+
+vec3			operator*(const vec3 &lhs, float rhs);
+vec3			operator/(const vec3 &lhs, float rhs);
+vec3			operator-(const vec3 &lhs, const vec3 &rhs);
+vec3			operator+(const vec3 &lhs, const vec3 &rhs);
 
 #endif
