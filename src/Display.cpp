@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/19 21:03:42 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/07 18:27:39 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/08 12:05:20 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include "Display.hpp"
 #include "General.hpp"	/* OPENGL defines */
+#include "Utils.hpp"	/* error_quit */
 #include "All.hpp"
 
 Display::Display(void) { }
@@ -67,9 +68,12 @@ static void	_draw_objects(const Game &game)
 					.translate(obj.position).transpose());
 				break ;
 			case Sphere :
-				_push_matrix(spheres_mat, Matrix().scale({obj.diameter, obj.diameter, obj.diameter})
+				_push_matrix(spheres_mat, (Matrix() * (obj.radius * 2.0f))
 					.translate(obj.position).transpose());
 				break ;
+			default:
+				Utils::error_quit("Undefined Object Type");
+				break;
 		}
 	}
 
@@ -100,7 +104,7 @@ static void	_draw_floor(void)
 		model.data(), GL_DYNAMIC_DRAW);
 	glUniform1i(all.gl.uniform.object_type, 2);
 	glUniform1i(all.gl.uniform.color, 0xe5e5e5);
-	glDrawArraysInstanced(GL_TRIANGLES, 30, 6, 1);
+	glDrawArraysInstanced(GL_TRIANGLES, 30, 6, 1);	/* top of cube */
 }
 
 /* ########################################################################## */
@@ -108,16 +112,19 @@ static void	_draw_floor(void)
 void		Display::update(const Game &game)
 {
 	Matrix	view;
+	Matrix	view_rotate;
 	vec3	inv_pos;
 
-	/* camera matrix and look is inverted */
+	/* camera position is inverted */
 	inv_pos = {-game.pos[0], -game.pos[1], -game.pos[2]};
+
+	/* invert roll-pitch-yaw order because camera direction is inverted */
+	view_rotate.rotate(0, -game.look_yaw, 0);
+	view_rotate.rotate(-game.look_pitch, 0, 0);
 	if (game.camera_lock == Unlocked)
-		view = view.translate(inv_pos).rotate(-game.look_pitch, -game.look_yaw,
-			0);
+		view = view_rotate * view.translate(inv_pos);
 	else if (game.camera_lock == Locked)
-		view = view.rotate(-game.look_pitch, -game.look_yaw, 0).translate(0, 0,
-			game.pos_locked);
+		view = (view_rotate * view).translate(0, 0, game.pos_locked);
 	glUniformMatrix4fv(all.gl.uniform.matrix_view, 1, true, view.data());
 
 	/* draw objects */

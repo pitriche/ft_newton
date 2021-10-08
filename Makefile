@@ -6,7 +6,7 @@
 #    By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/07 14:21:44 by pitriche          #+#    #+#              #
-#    Updated: 2021/10/06 11:22:13 by pitriche         ###   ########.fr        #
+#    Updated: 2021/10/08 14:44:33 by pitriche         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,15 +20,16 @@ RESET	= \033[0m
 NAME = ft_newton
 
 CLASSES=	\
-All		\
-Display	\
-Event	\
-Game	\
-Matrix	\
-Object	\
-OpenGL	\
-Time	\
-Utils	\
+All			\
+Collider	\
+Display		\
+Event		\
+Game		\
+Matrix		\
+Object		\
+OpenGL		\
+Time		\
+Utils		\
 
 CLASSES_HEADERS= $(addsuffix .hpp, $(CLASSES))
 CLASSES_SRCS= $(addsuffix .cpp, $(CLASSES))

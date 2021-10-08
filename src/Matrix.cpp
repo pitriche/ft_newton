@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/07 13:17:44 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/08 17:44:31 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ Matrix	&Matrix::rotate(float x, float y, float z)
 	rot_y._rotate_y(y);
 	rot_z._rotate_z(z);
 
-	*this = rot_z * rot_x * rot_y * (*this);
+	*this = rot_y * rot_x * rot_z * (*this);
 	return (*this);
 }
 
