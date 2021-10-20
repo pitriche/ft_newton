@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:13:45 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/07 13:17:41 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/13 15:34:30 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ struct Matrix : public std::array<float, 16>
 		Matrix	&translate(const vec3 &translation);
 		Matrix	&scale(const vec3 &scaling);
 
-		Matrix	&operator=(const Matrix &rhs);
 		Matrix	operator*(const Matrix &rhs) const;
 		Matrix	operator*(float rhs) const;
 

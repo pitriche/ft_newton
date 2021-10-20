@@ -17,19 +17,34 @@
 
 struct Keys
 {
-	unsigned		w:1;
-	unsigned		a:1;
-	unsigned		s:1;
-	unsigned		d:1;
-	unsigned		lshift:1;
-	unsigned		space:1;
+	bool	w;
+	bool	a;
+	bool	s;
+	bool	d;
+	bool	lshift;
+	bool	space;
 
-	unsigned		mouse_right:1;
-	int				mouse_x;	/* only when rmb pressed if mouse_middle=1 */
-	int				mouse_y;
-	int				mouse_scroll;
+	bool	mouse_right;
+	int		mouse_x;		/* only when rmb pressed if mouse_middle = 1 */
+	int		mouse_y;
+	int		mouse_scroll;
 
-	unsigned		mouse_middle:1;	/* toggle, 1 for Locked 0 for Unlocked */
+	bool	mouse_middle;	/* toggle, 1 for Locked 0 for Unlocked */
+
+	/* object throw */
+	bool		object_thrown;
+	bool		object_type;	/* 0 for Cube, 1 for Sphere */
+	bool		object_auto;	/* fire every frame */
+
+	unsigned	object_number;	/* for shotgun */
+	float		object_speed;
+	float		object_mass;
+	float		object_size;
+
+	float		max_distance;	/* objects beyound this will be removed */
+	float		time_speed;
+	float		gravity;
+
 };
 
 /*
@@ -47,8 +62,8 @@ struct Event
 
 	protected:
 	private:
-		void	_keychange(SDL_Keycode kc, unsigned key_state);
-		void	_mousechange(SDL_Keycode kc, unsigned key_state);
+		void	_keychange(SDL_Keycode kc, bool key_state);
+		void	_mousechange(Uint8 button, bool button_state);
 
 		Event(const Event &src);
 };

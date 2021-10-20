@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/19 21:03:42 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/05 13:57:34 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/19 10:24:06 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ void		Time::nsleep(unsigned long nsec)
 void		Time::update(void)
 {
 	this->_pure_delta = Time::timestamp() - this->_old_ts;
+
 	this->delta = this->_pure_delta;
 	if (this->_pure_delta < this->_min_delta)
 	{

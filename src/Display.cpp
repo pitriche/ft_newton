@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/19 21:03:42 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/08 12:05:20 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/19 12:56:00 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "General.hpp"	/* OPENGL defines */
 #include "Utils.hpp"	/* error_quit */
 #include "All.hpp"
+#include <vector>
 
 Display::Display(void) { }
 Display::Display(const Display &) { }
@@ -135,5 +136,5 @@ void		Display::update(const Game &game)
 	glFinish();
 	SDL_GL_SwapWindow(this->window);
 
-	std::cout << all.time.fps_average() << std::endl;
+	std::cout << all.time.fps_average() << ", Objects:" << game.obj.size() << std::endl;
 }

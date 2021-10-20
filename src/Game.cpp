@@ -6,15 +6,16 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/08 17:56:55 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/20 15:19:48 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Game.hpp"
 #include <cmath>		/* sqrt */
+#include <cstdlib>		/* rand */
 #include "Collider.hpp"	/* all collisions */
 
-Game::Game(void) : game_speed(1.0f), gravity(9.80665f) { }
+Game::Game(void) { }
 Game::~Game(void) { }
 
 /* ########################################################################## */
@@ -68,36 +69,55 @@ void	Game::init(void)
 	this->pos[1] = 1.0f;
 	this->pos_locked = 8.0f;
 
-
-	for (unsigned y = 5; y < 50; y += 5)
-		_add_sphere(this->obj, {0, (float)y, 0}, 2, 1);
-	_add_sphere(this->obj, {0, 5, 0}, 2, 1);
-
-	_add_cube(this->obj, {-1, 2.2f, 0}, 1);
-	this->obj.back().angular_velocity = {1.4f, 1.3f, 1.5f};
-	this->obj.back().velocity = {0, 30.3f, -0};
-
 	const int MULT = 8;
 	for (unsigned k = 0; k < MULT; ++k) for (unsigned j = 0; j < MULT; ++j) for (unsigned i = 0; i < MULT; ++i)
 	{
-		_add_cube(this->obj, {k * 1.0f + 3.0f, j * 1.0f + 0.5f, i * 1.0f}, 0.5f);
-		_add_sphere(this->obj, {k * -1.0f - 3.0f, j * 1.0f + 0.5f, i * 1.0f + j * 0.001f}, 0.75f, 1);
+	// 	// _add_cube(this->obj, {k * 1.0f + 5.0f, j * 1.0f + 0.5f, i * 1.0f + 2.0f}, 0.5f);
+		_add_sphere(this->obj, {k * -5.0f - 5.0f, j * 6.9f + 0.5f, i * 5.0f}, 5, 10);
 	}
-	/* cardinal boxes */
-	// _add_cube(this->obj, {3, 0, 0}, {0.5f, 2, 0.5f}, {0, 0, 1.57f}, 1);
-	// _add_cube(this->obj, {0, 0, 3}, {0.2f, 4, 0.2f}, {1.57f, 0, 0}, 1);
-	// _add_cube(this->obj, {0, 3, 0}, {0.6f, 3, 0.6f}, {0, 0, 0}, 1);
+	// /* cardinal boxes */
+	// _add_cube(this->obj, {5, 5, 0}, {0.5f, 2, 0.5f}, {0, 0, 1.57f}, 1);
+	// _add_cube(this->obj, {0, 5, 5}, {0.2f, 4, 0.2f}, {1.57f, 0, 0}, 1);
+	// _add_cube(this->obj, {0, 5, 0}, {0.6f, 3, 0.6f}, {0, 0, 0}, 1);
 
-	_add_cube(this->obj, {0, 3, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
-	this->obj.back().angular_velocity = {0, 50, 0};
-	_add_cube(this->obj, {0, 5, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
-	_add_cube(this->obj, {0, 7, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
-	this->obj.back().angular_velocity = {0, 50, 0};
-	_add_sphere(this->obj, {0, 9, -5}, 1, 1.5f);
+	// /* tower */
+	// _add_cube(this->obj, {0, 3, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
+	// this->obj.back().angular_velocity = {0, -10, 0};
+	// _add_cube(this->obj, {0, 5, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
+	// _add_cube(this->obj, {0, 7, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
+	// this->obj.back().angular_velocity = {0, 10, 0};
+	// _add_sphere(this->obj, {0, 9, -5}, 1, 1.5f);
+
+	// /* heavy and light cubes and spheres */
+	// _add_cube(this->obj, {-5, 3, -15}, {4, 4, 4}, {0, 0, 0}, 100);
+	// _add_cube(this->obj, {5, 3, -15}, {3.5f, 3.5f, 3.5f}, {0, 0, 0}, 0.1f);
+
+	// _add_sphere(this->obj, {-3, 5.95f, 5}, 2, 1);
+	// this->obj.back().velocity = {5, 0, 0};
+	// _add_sphere(this->obj, {3, 4, 5}, 2, 1);
+	// this->obj.back().velocity = {0, 0, 0};
+
+
+	// _add_sphere(this->obj, {-10, 8, 10}, 2, 2);
+	// this->obj.back().velocity = {1, 0, 0};
+	// _add_sphere(this->obj, {10, 8, 10}, 2, 1);
+	// this->obj.back().velocity = {-1, 0, 0};
+
+
+
+	// _add_cube(this->obj, {0, 5, 6}, {2, 3, 4}, {-0.7, 0.5, 0.5}, 10);
+	// this->obj.back().angular_velocity = {0, 1, 2};
+	// _add_sphere(this->obj, {1, 15, 6}, 1.5f, 10);
+
+	_add_cube(this->obj, {1, 3, 6}, {3, 3, 3}, {(float)-M_PI_4, 0, (float)-M_PI_2}, 1000);
+	// this->obj.back().angular_velocity = {0, 0.2, 0.5};
+	_add_sphere(this->obj, {1.00001f, 7, 6}, 2.5f, 1000);
+	// this->obj.back().velocity = {0, -20, 0};
+
 }
 
 /* ########################################################################## */
-/* #####################		Main game logic			##################### */
+/* #####################		Camera update			##################### */
 /* ########################################################################## */
 
 void		Game::_update_camera(float delta, const Keys &key)
@@ -125,7 +145,8 @@ void		Game::_update_camera(float delta, const Keys &key)
 	if (this->camera_lock == Locked && this->look_pitch < LOOK_CAP_PITCH_LOCK)
 		this->look_pitch = LOOK_CAP_PITCH_LOCK;
 
-	/* set and cap positions */
+	/* set and cap positions (camera speed is time_speed independant)*/
+	// delta /= key.time_speed;
 	this->pos[1] += (unsigned)key.space * delta * CAMERA_SPEED -
 	(unsigned)key.lshift * delta * CAMERA_SPEED;
 	if (this->pos[1] < POS_CAP_Y)
@@ -146,24 +167,39 @@ void		Game::_update_camera(float delta, const Keys &key)
 }
 
 /* ########################################################################## */
+/* #####################		Objects update			##################### */
+/* ########################################################################## */
 
 static bool _compare_z(const Object &a, const Object &b)
 { return (a.position[1] < b.position[1]); }
-
-void		Game::_update_objects(float delta)
+#include <iostream>
+void		Game::_update_objects(float delta, const Keys &key)
 {
 	int	obj_id;
 
 	/* sort by Z */
 	std::sort(this->obj.begin(), this->obj.end(), _compare_z);
+
+
+	/* remove objects beyound max distance, and corrupted objects */
+	for (unsigned i = 0; i < this->obj.size(); ++i)
+		if (vec3_length(this->obj[i].position - this->pos) > key.max_distance ||
+			isnan(this->obj[i].position[1]) || isinf(this->obj[i].position[1]))
+			this->obj.erase(this->obj.begin() + i);
+
+	/* compute cube points */
+	for (Object &obj : this->obj)
+		if (obj.type == Cube)
+			obj.compute_points();
+
 	obj_id = 0;
 	for (Object &obj : this->obj)
 	{
 		if (!obj.rest)
-			obj.velocity[1] -= this->gravity * delta;
+			obj.velocity[1] -= key.gravity * delta;
 
 		/* collisions */
-		Collider::collide_floor(obj, delta);
+		Collider::collide_floor(obj);
 		for (unsigned i = (unsigned)obj_id + 1; i < this->obj.size(); ++i)
 			Collider::collide_object(obj, this->obj[i]);
 		++obj_id;
@@ -176,11 +212,58 @@ void		Game::_update_objects(float delta)
 
 /* ########################################################################## */
 
+void		Game::_throw_object(const Keys &key)
+{
+	const float	spread = 0.15f;
+	vec3		velocity;
+	vec3		position;
+	vec3		angular_position;
+	vec3		dimension;
+
+	if (!key.object_thrown || key.mouse_middle)	/* only on unlocked view */
+		return ;
+	for (unsigned i = 0; i < key.object_number; ++i)
+	{
+		/* velocity, add spread if multiple objects */
+		if (key.object_number > 1)
+		{
+			velocity = {rand() * spread / INT_MAX, rand() * spread / INT_MAX,
+				1.0f};
+			velocity -= {spread * 0.5f, spread * 0.5f, 0.0f};/* center spread */
+		}
+		else
+			velocity = {0.0f, 0.0f, 1.0f};
+		velocity *= key.object_speed;
+		vec3_rotate(velocity, this->look_pitch, this->look_yaw, 0);
+
+		/* position, spawn object 2m in front of camera */
+		position = this->pos + (velocity / (key.object_speed + 0.01f)) * 2.0f;
+
+		/* rotate cubes to follow camera */
+		angular_position = {this->look_pitch, this->look_yaw, 0};
+
+		/* scale cubes */
+		dimension = {key.object_size, key.object_size, key.object_size};
+
+		if (!key.object_type)
+			_add_cube(this->obj, position, dimension, angular_position,
+				key.object_mass);
+		else
+			_add_sphere(this->obj, position, key.object_size, key.object_mass);
+		this->obj.back().velocity = velocity;
+	}
+}
+
+/* ########################################################################## */
+
 void		Game::update(float delta, const Keys &key)
 {
 	/* cap delta time */
 	if (delta > MAX_DELTA)
 		delta = MAX_DELTA;
+
 	this->_update_camera(delta, key);
-	this->_update_objects(delta);
+	delta *= key.time_speed;	/* will mess up physics at high values */
+	this->_throw_object(key);
+	this->_update_objects(delta, key);
 }

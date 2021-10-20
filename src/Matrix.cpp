@@ -6,13 +6,13 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/08 17:44:31 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/13 17:51:28 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Matrix.hpp"
 #include "Utils.hpp"	/* round */
-#include <cmath>		/* tan */
+#include <cmath>		/* cos, sin, tan */
 
 /*
 	Identity matrix
@@ -85,18 +85,30 @@ Matrix	&Matrix::translate(const vec3 &translation)
 
 /* #####################			Rotation			##################### */
 
-/* Z * X * Y, can be vastly optimized */
+/* Z * X * Y */
 Matrix	&Matrix::rotate(float x, float y, float z)
 {
-	Matrix rot_x;
-	Matrix rot_y;
-	Matrix rot_z;
+	Matrix	rotation;
+	float	cos_x, cos_y, cos_z;
+	float	sin_x, sin_y, sin_z;
 
-	rot_x._rotate_x(x);
-	rot_y._rotate_y(y);
-	rot_z._rotate_z(z);
+	cos_x = cos(x);
+	cos_y = cos(y);
+	cos_z = cos(z);
+	sin_x = sin(x);
+	sin_y = sin(y);
+	sin_z = sin(z);
+	rotation[0] = cos_z * cos_y + sin_z * sin_x * sin_y;
+	rotation[1] = -sin_z * cos_y + cos_z * sin_x * sin_y;
+	rotation[2] = cos_x * sin_y;
+	rotation[4] = sin_z * cos_x;
+	rotation[5] = cos_z * cos_x;
+	rotation[6] = -sin_x;
+	rotation[8] = -cos_z * sin_y + sin_z * sin_x * cos_y;
+	rotation[9] = sin_z * sin_y + cos_z * sin_x * cos_y;
+	rotation[10] = cos_x * cos_y;
 
-	*this = rot_y * rot_x * rot_z * (*this);
+	*this = rotation * (*this);
 	return (*this);
 }
 
@@ -151,13 +163,6 @@ Matrix	&Matrix::scale(const vec3 &scaling)
 }
 
 /* #####################			Operators			##################### */
-
-Matrix	&Matrix::operator=(const Matrix &rhs)
-{
-	for (unsigned i = 0; i < 16; ++i)
-		(*this)[i] = rhs[i];
-	return (*this);
-}
 
 /* matrix multiplication */
 Matrix	Matrix::operator*(const Matrix &rhs) const

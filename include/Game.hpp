@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:13:45 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/06 11:31:21 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/15 18:57:59 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,11 @@ struct Game
 
 		std::vector<Object>	obj;	/* All objects */
 
-		float			game_speed;	// SHOULD BE INCLUDED IN TIME
-		float			gravity;
 
 	private :
 		void	_update_camera(float delta, const Keys &key);
-		void	_update_objects(float delta);
+		void	_throw_object(const Keys &key);
+		void	_update_objects(float delta, const Keys &key);
 };
 
 #endif

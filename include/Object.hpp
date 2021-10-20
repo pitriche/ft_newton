@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:13:45 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/08 10:57:18 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/19 10:43:12 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define OBJECT_HPP
 
 # include "General.hpp"
+# include <array>
 
 enum	e_type
 {
@@ -40,7 +41,12 @@ class Object
 		vec3		dimension;			/* for cubes */
 		float		radius;				/* for all */
 
-		bool		rest;				/* is rested */
+		/* for physical engine */
+		bool				rest;		/* is rested on ground */
+		std::array<vec3, 8>	points;		/* points of cube */
+		std::array<vec3, 3>	normals;	/* normals of all cube faces */
+
+		void	compute_points(void);
 };
 
 #endif
