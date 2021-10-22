@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/22 17:58:41 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/22 18:03:55 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,8 @@ static void	_cube_floor_collision(Object &obj)
 /* ########################################################################## */
 
 /* #########################	Cube - Line			######################### */
+
+// checker avec cube sans dimension et rotation pour tester
 
 bool	_cube_line_collision(Object &cube, Line line) //////////////////////////////// static here
 {
