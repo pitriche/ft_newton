@@ -1,32 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Utils.hpp                                          :+:      :+:    :+:   */
+/*   Line.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:13:45 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/21 12:14:03 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/22 12:09:04 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILS_HPP
-# define UTILS_HPP
+#ifndef LINE_HPP
+# define LINE_HPP
 
-# include <iostream>	/* std::string */
-# include <array>		/* std::array */
-# include "Matrix.hpp"	/* Matrix */
+# include "General.hpp"	/* vec3 */
+# include <iostream>	/* ostream */
 
-namespace Utils
+class Line
 {
-	void		error_quit(const std::string &str);
-	std::string	read_file(const char *filename);
-	float		round(float f, int decimal);
-	float		square(float f);
-	float		max3(const std::array<float, 3>	&vec);
-	unsigned	max3_id(const std::array<float, 3>	&vec);
-	void		float_cap(float &f, float min, float max);
-	void		unsigned_cap(unsigned &n, unsigned min, unsigned max);
-}
+	public :
+		Line(void);
+		Line(const vec3 &p1, const vec3 &p2);
+		Line(const Line &src);
+		virtual ~Line(void);
+
+		vec3	origin;
+		vec3	dir;
+		float	length;
+
+		Line	&operator=(const Line &rhs);
+
+	protected:
+	private:
+};
+
+std::ostream	&operator<<(std::ostream &lhs, const Line &rhs);
 
 #endif

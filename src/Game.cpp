@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/20 15:19:48 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/22 17:59:32 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,16 +65,16 @@ void	Game::init(void)
 
 	/* initial camera position, unlocked */
 	SDL_SetRelativeMouseMode(SDL_TRUE);
-	this->pos[2] = -4.0f;
+	this->pos[2] = -7.0f;
 	this->pos[1] = 1.0f;
 	this->pos_locked = 8.0f;
 
-	const int MULT = 8;
-	for (unsigned k = 0; k < MULT; ++k) for (unsigned j = 0; j < MULT; ++j) for (unsigned i = 0; i < MULT; ++i)
-	{
+	// const int MULT = 8;
+	// for (unsigned k = 0; k < MULT; ++k) for (unsigned j = 0; j < MULT; ++j) for (unsigned i = 0; i < MULT; ++i)
+	// {
 	// 	// _add_cube(this->obj, {k * 1.0f + 5.0f, j * 1.0f + 0.5f, i * 1.0f + 2.0f}, 0.5f);
-		_add_sphere(this->obj, {k * -5.0f - 5.0f, j * 6.9f + 0.5f, i * 5.0f}, 5, 10);
-	}
+	// 	_add_sphere(this->obj, {k * -5.0f - 5.0f, j * 6.9f + 0.5f, i * 5.0f}, 5, 10);
+	// }
 	// /* cardinal boxes */
 	// _add_cube(this->obj, {5, 5, 0}, {0.5f, 2, 0.5f}, {0, 0, 1.57f}, 1);
 	// _add_cube(this->obj, {0, 5, 5}, {0.2f, 4, 0.2f}, {1.57f, 0, 0}, 1);
@@ -103,15 +103,19 @@ void	Game::init(void)
 	// _add_sphere(this->obj, {10, 8, 10}, 2, 1);
 	// this->obj.back().velocity = {-1, 0, 0};
 
-
-
 	// _add_cube(this->obj, {0, 5, 6}, {2, 3, 4}, {-0.7, 0.5, 0.5}, 10);
 	// this->obj.back().angular_velocity = {0, 1, 2};
 	// _add_sphere(this->obj, {1, 15, 6}, 1.5f, 10);
 
-	_add_cube(this->obj, {1, 3, 6}, {3, 3, 3}, {(float)-M_PI_4, 0, (float)-M_PI_2}, 1000);
+	// /* piscine a boules */
+	// _add_cube(this->obj, {0, 2, 5}, {11, 4, 1}, {0, 0, 0}, 1000000);
+	// _add_cube(this->obj, {0, 2, -5}, {11, 4, 1}, {0, 0, 0}, 1000000);
+	// _add_cube(this->obj, {5, 2, 0}, {1, 4, 9}, {0, 0, 0}, 1000000);
+	// _add_cube(this->obj, {-5, 2, 0}, {1, 4, 9}, {0, 0, 0}, 1000000);
+
+	_add_cube(this->obj, {0, 1.5, 3}, {1, 2, 3}, {(float)-M_PI_4, 0, (float)-M_PI_2}, 1000);
 	// this->obj.back().angular_velocity = {0, 0.2, 0.5};
-	_add_sphere(this->obj, {1.00001f, 7, 6}, 2.5f, 1000);
+	_add_cube(this->obj, {0, 7.5, 2}, {1, 1, 1}, {0, 0, 0}, 1000);
 	// this->obj.back().velocity = {0, -20, 0};
 
 }
@@ -119,6 +123,8 @@ void	Game::init(void)
 /* ########################################################################## */
 /* #####################		Camera update			##################### */
 /* ########################################################################## */
+#include "Line.hpp" //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool	_cube_line_collision(Object &cube, Line line); //////////////////////////////// static here
 
 void		Game::_update_camera(float delta, const Keys &key)
 {
@@ -161,6 +167,18 @@ void		Game::_update_camera(float delta, const Keys &key)
 	this->pos[2] += delta_z * cosf(this->look_yaw) +
 	delta_x * cosf(this->look_yaw + (float)M_PI_2);
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	this->obj[1].position = this->pos + (vec3){-1, 0, 5};
+
+	vec3	tmp = {0, 0, key.object_speed};
+	vec3_rotate(tmp, this->look_pitch, this->look_yaw, 0);
+	Line	line(this->pos, this->pos + tmp);
+	std::cout << line << std::endl;
+	std::cout << _cube_line_collision(this->obj[0], line) << std::endl;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 	this->pos_locked += key.mouse_scroll / 1000.0f * SCROLL_SENSITIVITY;
 	if (this->pos_locked < 0)
 		this->pos_locked = 0;
@@ -168,48 +186,6 @@ void		Game::_update_camera(float delta, const Keys &key)
 
 /* ########################################################################## */
 /* #####################		Objects update			##################### */
-/* ########################################################################## */
-
-static bool _compare_z(const Object &a, const Object &b)
-{ return (a.position[1] < b.position[1]); }
-#include <iostream>
-void		Game::_update_objects(float delta, const Keys &key)
-{
-	int	obj_id;
-
-	/* sort by Z */
-	std::sort(this->obj.begin(), this->obj.end(), _compare_z);
-
-
-	/* remove objects beyound max distance, and corrupted objects */
-	for (unsigned i = 0; i < this->obj.size(); ++i)
-		if (vec3_length(this->obj[i].position - this->pos) > key.max_distance ||
-			isnan(this->obj[i].position[1]) || isinf(this->obj[i].position[1]))
-			this->obj.erase(this->obj.begin() + i);
-
-	/* compute cube points */
-	for (Object &obj : this->obj)
-		if (obj.type == Cube)
-			obj.compute_points();
-
-	obj_id = 0;
-	for (Object &obj : this->obj)
-	{
-		if (!obj.rest)
-			obj.velocity[1] -= key.gravity * delta;
-
-		/* collisions */
-		Collider::collide_floor(obj);
-		for (unsigned i = (unsigned)obj_id + 1; i < this->obj.size(); ++i)
-			Collider::collide_object(obj, this->obj[i]);
-		++obj_id;
-
-		/* update position and rotation */
-		obj.position += obj.velocity * delta;
-		obj.angular_position += obj.angular_velocity * delta;
-	}
-}
-
 /* ########################################################################## */
 
 void		Game::_throw_object(const Keys &key)
@@ -251,6 +227,47 @@ void		Game::_throw_object(const Keys &key)
 		else
 			_add_sphere(this->obj, position, key.object_size, key.object_mass);
 		this->obj.back().velocity = velocity;
+	}
+}
+
+/* ########################################################################## */
+
+static bool _compare_z(const Object &a, const Object &b)
+{ return (a.position[1] < b.position[1]); }
+
+void		Game::_update_objects(float delta, const Keys &key)
+{
+	int	obj_id;
+
+	/* sort by Z */
+	// std::sort(this->obj.begin(), this->obj.end(), _compare_z); ///////////////////////////////////////////////REMETTR
+
+
+	/* remove objects beyound max distance, and corrupted objects */
+	for (unsigned i = 0; i < this->obj.size(); ++i)
+		if (vec3_length(this->obj[i].position - this->pos) > key.max_distance ||
+			isnan(this->obj[i].position[1]) || isinf(this->obj[i].position[1]))
+			this->obj.erase(this->obj.begin() + i);
+
+	/* compute cube points */
+	for (Object &obj : this->obj)
+		if (obj.type == Cube)
+			obj.compute_points();
+
+	obj_id = 0;
+	for (Object &obj : this->obj)
+	{
+		obj.velocity[1] -= key.gravity * delta;
+
+		/* collisions */
+		Collider::collide_floor(obj);
+		for (unsigned i = (unsigned)obj_id + 1; i < this->obj.size(); ++i)
+			Collider::collide_object(obj, this->obj[i]);
+		++obj_id;
+
+		/* update position and rotation */
+		//obj.position += obj.velocity * delta; /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		obj.angular_position += obj.angular_velocity * delta;
 	}
 }
 

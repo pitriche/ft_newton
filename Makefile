@@ -6,7 +6,7 @@
 #    By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/07 14:21:44 by pitriche          #+#    #+#              #
-#    Updated: 2021/10/20 10:45:11 by pitriche         ###   ########.fr        #
+#    Updated: 2021/10/22 11:33:51 by pitriche         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,7 @@ Collider	\
 Display		\
 Event		\
 Game		\
+Line		\
 Matrix		\
 Object		\
 OpenGL		\

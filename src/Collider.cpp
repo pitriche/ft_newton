@@ -6,15 +6,15 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/20 15:18:49 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/22 17:58:41 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Collider.hpp"
 #include "Utils.hpp"	/* square */
+#include "Line.hpp"		/* Line */
 #include <cmath>		/* abs */
 
-#include <iostream>
 /* collision computation, NOT solving. Normal must be normalized */
 static void	_compute_collision(Object &obj1, Object &obj2, const vec3 &normal)
 {
@@ -33,11 +33,29 @@ static void	_compute_collision(Object &obj1, Object &obj2, const vec3 &normal)
 		Dp_scale /= 2 - COEFF_OF_RESTITUTION;
 	Dp *= Dp_scale;
 
-	// std::cout << "Delta p = " << Dp << std::endl;
-	obj1.velocity += Dp / obj1.mass;	/* precomputing 1 / m1 */
-	obj2.velocity -= Dp / obj2.mass;	/* might save 2 divisions */
+	obj1.velocity += Dp / obj1.mass;
+	obj2.velocity -= Dp / obj2.mass;
 	obj1.rest = false;
 	obj2.rest = false;
+}
+
+/* self explanatory, solve the collision by displacing the lightest object*/
+static void	_solve_collision(Object &obj1, Object &obj2, const vec3 &solution)
+{
+	if (obj1.type == Sphere && obj2.type == Sphere)
+	{
+		if (obj1.mass >= obj2.mass)
+			obj2.position = obj1.position + solution;
+		else
+			obj1.position = obj2.position - solution;
+	}
+	else
+	{
+		if (obj1.mass >= obj2.mass)
+			obj2.position += solution;
+		else
+			obj1.position -= solution;
+	}
 }
 
 /* ########################################################################## */
@@ -77,8 +95,7 @@ static void	_cube_floor_collision(Object &obj)
 	/* inelastic collision and ground friction */
 	if (abs(obj.velocity[1]) <= INELASTIC_SPEED)
 	{
-		if (vec3_length(obj.angular_velocity) == 0.0f)
-			obj.rest = true;
+		obj.rest = true;
 		obj.velocity[1] = 0.0f;
 		obj.velocity *= 1 - COEFF_OF_FRICTION;
 	}
@@ -92,6 +109,81 @@ static void	_cube_floor_collision(Object &obj)
 /* #########################	Cube - Cube			######################### */
 /* ########################################################################## */
 
+/* #########################	Cube - Line			######################### */
+
+bool	_cube_line_collision(Object &cube, Line line) //////////////////////////////// static here
+{
+	float	tmin;
+	float	tmax;
+	float	tymin;
+	float	tymax;
+	float	tzmin;
+	float	tzmax;
+	vec3	inv_dir;
+	vec3	null;
+	bool	axis_positive[3];
+
+	/* axis align the cube, with lower, closest left cornet at origin */
+	line.origin -= cube.position - cube.dimension * 0.5f;
+	vec3_rotate_inverse(line.origin, cube.angular_position);
+	vec3_rotate_inverse(line.dir, cube.angular_position);
+
+	null = {0.0f, 0.0f, 0.0f};
+	for (unsigned axis = 0; axis < 3; ++axis)
+	{
+		inv_dir[axis] = 1.0f / line.dir[axis];
+		axis_positive[axis] = line.dir[axis] > 0;
+	}
+
+	tmin = ((axis_positive[0] ? 0.0f : cube.dimension[0]) - line.origin[0]) * inv_dir[0];
+	tmax = ((axis_positive[0] ? cube.dimension[0] : 0.0f) - line.origin[0]) * inv_dir[0];
+
+	tymin = ((axis_positive[1] ? 0.0f : cube.dimension[1]) - line.origin[1]) * inv_dir[1];
+	tymax = ((axis_positive[1] ? cube.dimension[1] : 0.0f) - line.origin[1]) * inv_dir[1];
+
+	if ((tmin > tymax) || (tymin > tmax))
+		return (false);
+	if (tymin > tmin)
+		tmin = tymin;
+	if (tymax < tmax)
+		tmax = tymax;
+
+	tzmin = ((axis_positive[2] ? 0.0f : cube.dimension[2]) - line.origin[2]) * inv_dir[2];
+	tzmax = ((axis_positive[2] ? cube.dimension[2] : 0.0f) - line.origin[2]) * inv_dir[2];
+
+	if ((tmin > tzmax) || (tzmin > tmax))
+		return false;
+	if (tzmin > tmin)
+		tmin = tzmin;
+	if (tzmax < tmax)
+		tmax = tzmax;
+
+	std::cout << "Hit: tmin>" << tmin << " tmax<" << tmax << std::endl;
+	return (true);
+
+	// tmin = (bounds[r.sign[0]].x - r.orig.x) * r.invdir.x; 
+	// tmax = (bounds[1-r.sign[0]].x - r.orig.x) * r.invdir.x; 
+	// tymin = (bounds[r.sign[1]].y - r.orig.y) * r.invdir.y; 
+	// tymax = (bounds[1-r.sign[1]].y - r.orig.y) * r.invdir.y; 
+
+	// if ((tmin > tymax) || (tymin > tmax)) 
+	// 	return false; 
+	// if (tymin > tmin) 
+	// 	tmin = tymin; 
+	// if (tymax < tmax) 
+	// 	tmax = tymax; 
+ 
+	// tzmin = (bounds[r.sign[2]].z - r.orig.z) * r.invdir.z; 
+	// tzmax = (bounds[1-r.sign[2]].z - r.orig.z) * r.invdir.z; 
+ 
+	// if ((tmin > tzmax) || (tzmin > tmax)) 
+	// 	return false; 
+	// if (tzmin > tmin) 
+	// 	tmin = tzmin; 
+	// if (tzmax < tmax) 
+	// 	tmax = tzmax; 
+	// return (true);
+}
 
 
 
@@ -106,7 +198,7 @@ static void	_cube_floor_collision(Object &obj)
 
 
 
-
+/* #########################		Main			######################### */
 
 
 /*
@@ -130,15 +222,52 @@ static void	_cube_floor_collision(Object &obj)
 	\\//	\\//	\\//	\\//	\\//
 	 \/ 	 \/ 	 \/ 	 \/ 	 \/ 
 */
+#include <iostream> /////////////////////////////////////////////////////////////////////////////////////
+static bool	_cube_cube_collision_type0(Object &cube, Object &cube2)
+{
+	bool	axis_positive[3];
+	vec3	relative_pos_abs;
+	vec3	intersect;
+	vec3	normal;
+
+	/* for each of cube2's points */
+	for (unsigned i = 0; i < 8; ++i)
+	{
+		relative_pos_abs = cube2.points[i] - cube.position;
+		vec3_rotate_inverse(relative_pos_abs, cube.angular_position);
+		for (unsigned axis_vec = 0; axis_vec < 3; ++axis_vec)
+			axis_positive[axis_vec] = (relative_pos_abs[axis_vec] >= 0.0f);
+		for (float &f : relative_pos_abs)
+			f = std::abs(f);
+
+		intersect = relative_pos_abs - (cube.dimension * 0.5f);
+		/* axis separation theorem check */
+		if (intersect[0] < 0.0f && intersect[1] < 0.0f && intersect[2] < 0.0f)
+		{
+			std::cout << "HIT\n";
+			unsigned axis = Utils::max3_id(intersect);
+			normal = cube.normals[axis] * (axis_positive[axis] ? 1.0f : -1.0f);
+			_solve_collision(cube, cube2, normal * -intersect[axis]);
+			_compute_collision(cube, cube2, normal);
+			return (true);
+		}
+	}
+	return (false);
+}
 
 /*
 	2 types :
 	-type 0: obj2's corner is inside obj1 
-	-type 1: obj1's corner is inside obj2
+	-type 1: obj1's corner is inside obj2 (swap cubes for type 0)
 */
 static void	_cube_cube_collision(Object &cube, Object &cube2)
 {
-	// _compute_collision(obj1, obj2, obj2.position - obj1.position);
+	/* check type 0 first, and type 1 if no collision */
+	if (!_cube_cube_collision_type0(cube, cube2))
+	{
+		// std::cout << "2nd call\n\n";
+		_cube_cube_collision_type0(cube2, cube);
+	}
 }
 /*
 	 /\		 /\		 /\		 /\		 /\	
@@ -209,8 +338,9 @@ static void	_cube_sphere_type0(Object &cube, Object &sphere, vec3 &relative_pos,
 	solution = cube.dimension[axis] / 2.0f -
 	(abs(relative_pos[axis]) - sphere.radius);
 
-	/* solve collision by moving sphere away. Cause mild ground sandwich */
-	sphere.position += normal * solution;
+	/* solve collision by moving sphere away */
+	_solve_collision(sphere, cube, normal * -solution);
+	// sphere.position += normal * solution;
 
 	/* compute collision */
 	_compute_collision(cube, sphere, normal);
@@ -240,6 +370,7 @@ static void	_cube_sphere_type12(Object &cube, Object &sphere,
 
 		/* solve, then compute collision */
 		solution = sphere.radius - std::sqrt(corner_dist_sq);
+		// _solve_collision(cube, sphere, normal * solution);
 		sphere.position -= normal * solution;
 		_compute_collision(cube, sphere, normal);
 	}
@@ -301,7 +432,7 @@ static void	_sphere_sphere_collision(Object &obj1, Object &obj2, vec3 solution)
 	vec3	normal;
 
 	/* collision solving */
-	obj2.position = obj1.position + solution;
+	_solve_collision(obj1, obj2, solution);
 
 	normal = solution;
 	vec3_normalize(normal);
@@ -339,7 +470,7 @@ namespace Collider
 		dist = vec3_length(obj1_obj2);
 		dist_radii = obj1.radius + obj2.radius;
 		intersect = dist - dist_radii;
-		if (intersect < 0)	/* Circumscribed sphere collision check */
+		if (intersect < 0)
 		{
 			/* secondary collision, collision solving, trajectory change */
 			if (obj1.type != obj2.type)		/* cube - sphere */

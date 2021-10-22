@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/20 14:01:59 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/10/21 11:55:36 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ Object	&Object::operator=(const Object &rhs)
 	this->points = rhs.points;
 	return (*this);
 }
-#include <iostream> ////////////////////////////////////////////////
+
 /* compute points and normal, for collision computing and solving */
 void	Object::compute_points(void)
 {
@@ -57,7 +57,6 @@ void	Object::compute_points(void)
 	rotation[2][1] = sin_z * sin_y + cos_z * sin_x * cos_y;
 	rotation[2][2] = cos_x * cos_y;
 
-
 	/* point index is meaningless but order may impact optimization */
 	this->points[0] = {-0.5f, -0.5f, -0.5f};
 	this->points[1] = {0.5f, -0.5f, -0.5f};
@@ -70,7 +69,6 @@ void	Object::compute_points(void)
 	this->normals[0] = {1.0f, 0.0f, 0.0f};	/* X aligned normal (right face) */
 	this->normals[1] = {0.0f, 1.0f, 0.0f};	/* Y aligned normal (top face) */
 	this->normals[2] = {0.0f, 0.0f, 1.0f};	/* Z aligned normal (back face) */
-
 	for (vec3 &vec : this->points)	/* rotate then translate points */
 	{
 		tmp = vec;
@@ -89,5 +87,4 @@ void	Object::compute_points(void)
 		vec[1] = rotation[1] * tmp;
 		vec[2] = rotation[2] * tmp;
 	}
-
 }
