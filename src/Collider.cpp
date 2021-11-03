@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/22 18:03:55 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/11/03 17:56:59 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "Utils.hpp"	/* square */
 #include "Line.hpp"		/* Line */
 #include <cmath>		/* abs */
+#include "All.hpp"		/* to get delta time for arbitrary operations */
 
 /* collision computation, NOT solving. Normal must be normalized */
 static void	_compute_collision(Object &obj1, Object &obj2, const vec3 &normal)
@@ -111,127 +112,100 @@ static void	_cube_floor_collision(Object &obj)
 
 /* #########################	Cube - Line			######################### */
 
-// checker avec cube sans dimension et rotation pour tester
-
-bool	_cube_line_collision(Object &cube, Line line) //////////////////////////////// static here
+static bool	_cube_line_collision(Object &cube, Line line)
 {
 	float	tmin;
 	float	tmax;
-	float	tymin;
-	float	tymax;
-	float	tzmin;
-	float	tzmax;
+	float	tmpmin;
+	float	tmpmax;
 	vec3	inv_dir;
-	vec3	null;
 	bool	axis_positive[3];
 
 	/* axis align the cube, with lower, closest left cornet at origin */
-	line.origin -= cube.position - cube.dimension * 0.5f;
+	line.origin -= cube.position;
 	vec3_rotate_inverse(line.origin, cube.angular_position);
+	line.origin += cube.dimension * 0.5f;
 	vec3_rotate_inverse(line.dir, cube.angular_position);
 
-	null = {0.0f, 0.0f, 0.0f};
 	for (unsigned axis = 0; axis < 3; ++axis)
 	{
 		inv_dir[axis] = 1.0f / line.dir[axis];
 		axis_positive[axis] = line.dir[axis] > 0;
 	}
 
+	/* X axis */
 	tmin = ((axis_positive[0] ? 0.0f : cube.dimension[0]) - line.origin[0]) * inv_dir[0];
 	tmax = ((axis_positive[0] ? cube.dimension[0] : 0.0f) - line.origin[0]) * inv_dir[0];
 
-	tymin = ((axis_positive[1] ? 0.0f : cube.dimension[1]) - line.origin[1]) * inv_dir[1];
-	tymax = ((axis_positive[1] ? cube.dimension[1] : 0.0f) - line.origin[1]) * inv_dir[1];
-
-	if ((tmin > tymax) || (tymin > tmax))
+	/* Y axis */
+	tmpmin = ((axis_positive[1] ? 0.0f : cube.dimension[1]) - line.origin[1]) * inv_dir[1];
+	tmpmax = ((axis_positive[1] ? cube.dimension[1] : 0.0f) - line.origin[1]) * inv_dir[1];
+	if ((tmin > tmpmax) || (tmpmin > tmax))
 		return (false);
-	if (tymin > tmin)
-		tmin = tymin;
-	if (tymax < tmax)
-		tmax = tymax;
+	if (tmpmin > tmin)
+		tmin = tmpmin;
+	if (tmpmax < tmax)
+		tmax = tmpmax;
 
-	tzmin = ((axis_positive[2] ? 0.0f : cube.dimension[2]) - line.origin[2]) * inv_dir[2];
-	tzmax = ((axis_positive[2] ? cube.dimension[2] : 0.0f) - line.origin[2]) * inv_dir[2];
+	/* X axis */
+	tmpmin = ((axis_positive[2] ? 0.0f : cube.dimension[2]) - line.origin[2]) * inv_dir[2];
+	tmpmax = ((axis_positive[2] ? cube.dimension[2] : 0.0f) - line.origin[2]) * inv_dir[2];
+	if ((tmin > tmpmax) || (tmpmin > tmax))
+		return (false);
+	if (tmpmin > tmin)
+		tmin = tmpmin;
+	if (tmpmax < tmax)
+		tmax = tmpmax;
 
-	if ((tmin > tzmax) || (tzmin > tmax))
-		return false;
-	if (tzmin > tmin)
-		tmin = tzmin;
-	if (tzmax < tmax)
-		tmax = tzmax;
-
-	std::cout << "Hit: tmin>" << tmin << " tmax<" << tmax << std::endl;
+	if (tmax <= 0.0f)
+		return (false);
+	if (tmin > line.length)
+		return (false);
+	// tmin > 0.0f ? tmin : tmax
 	return (true);
-
-	// tmin = (bounds[r.sign[0]].x - r.orig.x) * r.invdir.x; 
-	// tmax = (bounds[1-r.sign[0]].x - r.orig.x) * r.invdir.x; 
-	// tymin = (bounds[r.sign[1]].y - r.orig.y) * r.invdir.y; 
-	// tymax = (bounds[1-r.sign[1]].y - r.orig.y) * r.invdir.y; 
-
-	// if ((tmin > tymax) || (tymin > tmax)) 
-	// 	return false; 
-	// if (tymin > tmin) 
-	// 	tmin = tymin; 
-	// if (tymax < tmax) 
-	// 	tmax = tymax; 
- 
-	// tzmin = (bounds[r.sign[2]].z - r.orig.z) * r.invdir.z; 
-	// tzmax = (bounds[1-r.sign[2]].z - r.orig.z) * r.invdir.z; 
- 
-	// if ((tmin > tzmax) || (tzmin > tmax)) 
-	// 	return false; 
-	// if (tzmin > tmin) 
-	// 	tmin = tzmin; 
-	// if (tzmax < tmax) 
-	// 	tmax = tzmax; 
-	// return (true);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* #########################		Main			######################### */
 
-
 /*
-	 __ 	 __ 	 __ 	 __ 	 __
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-   \\##//  \\##//  \\##//  \\##//  \\##//
-	\\//	\\//	\\//	\\//	\\//
-	 \/ 	 \/ 	 \/ 	 \/ 	 \/ 
+	find if the centers are closer together than the smallest dimention of both
+	cubes. If it is the case, spread them apart widely (f*ck finding the correct
+	amount)
 */
-#include <iostream> /////////////////////////////////////////////////////////////////////////////////////
+static void	_solve_cube_cube_secondary(Object &cube, Object &cube2)
+{
+	vec3	cube_cube2;
+	float	min_size;
+	float	min_size_cube2;
+	float	dist_radii;
+
+	cube_cube2 = cube2.position - cube.position;
+	min_size = -Utils::max3(cube.dimension * -1.0f);
+	min_size_cube2 = -Utils::max3(cube2.dimension * -1.0f);
+	if (min_size_cube2 < min_size)
+		min_size = min_size_cube2;
+	dist_radii = vec3_length(cube_cube2);
+	if (dist_radii < min_size)
+	{
+		
+		vec3_normalize(cube_cube2);
+		cube_cube2 *= 0.5f;	/*equally move each objects */
+		cube_cube2 *= (cube.radius + cube2.radius) - dist_radii;
+		cube2.position += cube_cube2;
+		cube.position -= cube_cube2;
+	}
+}
+
 static bool	_cube_cube_collision_type0(Object &cube, Object &cube2)
 {
-	bool	axis_positive[3];
-	vec3	relative_pos_abs;
-	vec3	intersect;
-	vec3	normal;
+	unsigned	axis;
+	bool		axis_positive[3];
+	vec3		relative_pos_abs;
+	vec3		intersect;
+	vec3		normal;
+	bool		collision;
 
+	collision = false;
 	/* for each of cube2's points */
 	for (unsigned i = 0; i < 8; ++i)
 	{
@@ -241,15 +215,42 @@ static bool	_cube_cube_collision_type0(Object &cube, Object &cube2)
 			axis_positive[axis_vec] = (relative_pos_abs[axis_vec] >= 0.0f);
 		for (float &f : relative_pos_abs)
 			f = std::abs(f);
-
 		intersect = relative_pos_abs - (cube.dimension * 0.5f);
-		/* axis separation theorem check */
 		if (intersect[0] < 0.0f && intersect[1] < 0.0f && intersect[2] < 0.0f)
 		{
-			std::cout << "HIT\n";
-			unsigned axis = Utils::max3_id(intersect);
+			axis = Utils::max3_id(intersect);
 			normal = cube.normals[axis] * (axis_positive[axis] ? 1.0f : -1.0f);
 			_solve_collision(cube, cube2, normal * -intersect[axis]);
+			_compute_collision(cube, cube2, normal);
+			cube2.compute_points();	/* update points after each collision */
+			collision = true;
+		}
+	}
+	_solve_cube_cube_secondary(cube, cube2);
+	return (collision);
+}
+
+static bool	_cube_cube_collision_type1(Object &cube, Object &cube2)	
+{
+	float	solution;
+	vec3	normal;
+
+	/* cube's edges in cube2 */
+	for (unsigned i = 0; i < 12; ++i)
+	{
+		if (_cube_line_collision(cube2, cube.edges[i]))
+		{
+			// Utils::debug_draw_line(all.game.debug, cube.edges[i]);
+			normal = cube.edges[i].origin + cube.edges[i].dir *
+			(cube.edges[i].length / 2.0f);
+			normal -= cube.position;
+			vec3_normalize(normal);
+
+			/* this is disgusting beyound words */
+			solution = vec3_length(cube.velocity - cube2.velocity) *
+			(all.time.delta / 1000000000.0f);
+
+			_solve_collision(cube, cube2, normal * solution);
 			_compute_collision(cube, cube2, normal);
 			return (true);
 		}
@@ -259,72 +260,25 @@ static bool	_cube_cube_collision_type0(Object &cube, Object &cube2)
 
 /*
 	2 types :
-	-type 0: obj2's corner is inside obj1 
-	-type 1: obj1's corner is inside obj2 (swap cubes for type 0)
+	-type 0: a cube's corner is inside the other
+	-type 1: a cube's edge is inside the other
 */
 static void	_cube_cube_collision(Object &cube, Object &cube2)
 {
-	/* check type 0 first, and type 1 if no collision */
-	if (!_cube_cube_collision_type0(cube, cube2))
+	/* check type 0, type 0 with object swapped, type 1, then type 1 swapped */
+	if (!_cube_cube_collision_type0(cube, cube2) &&
+		!_cube_cube_collision_type0(cube2, cube))
 	{
-		// std::cout << "2nd call\n\n";
-		_cube_cube_collision_type0(cube2, cube);
+		if (cube.radius > cube2.radius)
+		{
+			if (!_cube_cube_collision_type1(cube, cube2))
+				_cube_cube_collision_type1(cube2, cube);
+		}
+		else
+			if (!_cube_cube_collision_type1(cube2, cube))
+				_cube_cube_collision_type1(cube, cube2);
 	}
 }
-/*
-	 /\		 /\		 /\		 /\		 /\	
-	//\\	//\\	//\\	//\\	//\\
-   //##\\  //##\\  //##\\  //##\\  //##\\
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	|##|	|##|	|##|	|##|	|##|
-	 -- 	 -- 	 -- 	 -- 	 -- 
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* ########################################################################## */
 /* #########################	Sphere - Cube		######################### */

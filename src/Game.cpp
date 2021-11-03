@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/22 17:59:32 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/11/03 17:56:24 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,13 +80,26 @@ void	Game::init(void)
 	// _add_cube(this->obj, {0, 5, 5}, {0.2f, 4, 0.2f}, {1.57f, 0, 0}, 1);
 	// _add_cube(this->obj, {0, 5, 0}, {0.6f, 3, 0.6f}, {0, 0, 0}, 1);
 
-	// /* tower */
-	// _add_cube(this->obj, {0, 3, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
-	// this->obj.back().angular_velocity = {0, -10, 0};
-	// _add_cube(this->obj, {0, 5, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
-	// _add_cube(this->obj, {0, 7, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
-	// this->obj.back().angular_velocity = {0, 10, 0};
-	// _add_sphere(this->obj, {0, 9, -5}, 1, 1.5f);
+	/* tower */
+	_add_cube(this->obj, {0, 3, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
+	this->obj.back().angular_velocity = {0, -10, 0};
+	_add_cube(this->obj, {0, 5, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
+	_add_cube(this->obj, {0, 7, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
+	this->obj.back().angular_velocity = {0, 10, 0};
+	_add_sphere(this->obj, {0, 9, -5}, 1, 1.5f);
+
+	/* flat cube arch */
+	_add_cube(this->obj, {-5, 1, 5}, {2, 2, 2}, {0, 0, 0}, 100);
+	_add_cube(this->obj, {-5, 3, 5}, {1.9f, 2, 1.9f}, {0, 0, 0}, 100);
+	_add_cube(this->obj, {-5, 5, 5}, {1.8f, 2, 1.8f}, {0, 0, 0}, 100);
+	_add_cube(this->obj, {-5, 7, 5}, {1.7f, 2, 1.7f}, {0, 0, 0}, 100);
+
+	_add_cube(this->obj, {-8, 1, 5}, {2, 2, 2}, {0, 0, 0}, 100);
+	_add_cube(this->obj, {-8, 3, 5}, {1.9f, 2, 1.9f}, {0, 0, 0}, 100);
+	_add_cube(this->obj, {-8, 5, 5}, {1.8f, 2, 1.8f}, {0, 0, 0}, 100);
+	_add_cube(this->obj, {-8, 7, 5}, {1.7f, 2, 1.7f}, {0, 0, 0}, 100);
+
+
 
 	// /* heavy and light cubes and spheres */
 	// _add_cube(this->obj, {-5, 3, -15}, {4, 4, 4}, {0, 0, 0}, 100);
@@ -113,18 +126,20 @@ void	Game::init(void)
 	// _add_cube(this->obj, {5, 2, 0}, {1, 4, 9}, {0, 0, 0}, 1000000);
 	// _add_cube(this->obj, {-5, 2, 0}, {1, 4, 9}, {0, 0, 0}, 1000000);
 
-	_add_cube(this->obj, {0, 1.5, 3}, {1, 2, 3}, {(float)-M_PI_4, 0, (float)-M_PI_2}, 1000);
-	// this->obj.back().angular_velocity = {0, 0.2, 0.5};
-	_add_cube(this->obj, {0, 7.5, 2}, {1, 1, 1}, {0, 0, 0}, 1000);
-	// this->obj.back().velocity = {0, -20, 0};
-
+	_add_cube(this->obj, {0, 1.5, 2}, {2, 2, 2}, {(float)-M_PI_4, 0, (float)-M_PI_2}, 1000);
+	// this->obj[0].angular_velocity = {1, 2, 0.3};
+	
+	// _add_sphere(this->obj, {1, 15, 6}, 1.5f, 10);
+	_add_cube(this->obj, {0, 7.5, 2}, {1, 1, 1}, {0, 0, 0}, 100);
+	// _add_cube(this->obj, {0.117f, 1.542f, 1.255f}, {1, 1, 1}, {0, 0, 0}, 100);
 }
 
 /* ########################################################################## */
 /* #####################		Camera update			##################### */
 /* ########################################################################## */
-#include "Line.hpp" //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool	_cube_line_collision(Object &cube, Line line); //////////////////////////////// static here
+#include "Line.hpp" /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "All.hpp" //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "Utils.hpp" //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void		Game::_update_camera(float delta, const Keys &key)
 {
@@ -168,14 +183,21 @@ void		Game::_update_camera(float delta, const Keys &key)
 	delta_x * cosf(this->look_yaw + (float)M_PI_2);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	this->obj[1].position = this->pos + (vec3){-1, 0, 5};
+	// this->obj[1].position = this->pos + (vec3){-1, 0, 5};
+	// Line line;
+	// line.origin = {-1, 1.5, 1.58579};
+	// line.dir = {1, 1e-38, 1e-38};
+	// line.length = 2;
+	// Utils::debug_draw_line(this->debug, line);
+	// std::cout << _cube_line_collision(this->obj[0], line) << "<< Fix\n";
 
-	vec3	tmp = {0, 0, key.object_speed};
-	vec3_rotate(tmp, this->look_pitch, this->look_yaw, 0);
-	Line	line(this->pos, this->pos + tmp);
-	std::cout << line << std::endl;
-	std::cout << _cube_line_collision(this->obj[0], line) << std::endl;
+	// line.origin = this->pos + (vec3){-1, 0, 1};
+	// line.dir = {-1, 1e-10, 1e-10};
+	// // vec3_rotate(line.dir, 1e-10f, -M_PI_2, 0);
+	// line.length = key.object_speed;
 
+	// Utils::debug_draw_line(this->debug, line);
+	// std::cout << _cube_line_collision(this->obj[0], line) << "<< moving, line " << line << "\n";
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -240,8 +262,7 @@ void		Game::_update_objects(float delta, const Keys &key)
 	int	obj_id;
 
 	/* sort by Z */
-	// std::sort(this->obj.begin(), this->obj.end(), _compare_z); ///////////////////////////////////////////////REMETTR
-
+	std::sort(this->obj.begin(), this->obj.end(), _compare_z);
 
 	/* remove objects beyound max distance, and corrupted objects */
 	for (unsigned i = 0; i < this->obj.size(); ++i)
@@ -266,7 +287,7 @@ void		Game::_update_objects(float delta, const Keys &key)
 		++obj_id;
 
 		/* update position and rotation */
-		//obj.position += obj.velocity * delta; /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		obj.position += obj.velocity * delta;
 		obj.angular_position += obj.angular_velocity * delta;
 	}
 }
@@ -275,6 +296,8 @@ void		Game::_update_objects(float delta, const Keys &key)
 
 void		Game::update(float delta, const Keys &key)
 {
+	this->debug.clear();
+
 	/* cap delta time */
 	if (delta > MAX_DELTA)
 		delta = MAX_DELTA;

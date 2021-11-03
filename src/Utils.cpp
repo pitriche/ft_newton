@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/21 12:13:54 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/11/02 16:43:35 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,5 +85,29 @@ namespace Utils
 			n = min;
 		if (n > max)
 			n = max;
+	}
+
+	/* To add debug sphere */
+	void		add_sphere(std::vector<Object> &list, vec3 position, float
+		diameter)
+	{
+		Object	tmp;
+
+		tmp.type = Sphere;
+		tmp.position = position;
+		tmp.dimension = {0, 0, 0};			/* diameter used */
+		tmp.angular_position = {0, 0, 0};	/* no rotation */
+		tmp.mass = 1.0f;
+		tmp.angular_velocity = {0, 0, 0};
+		tmp.velocity = {0, 0, 0};
+		tmp.radius = diameter / 2.0f;
+		list.push_back(tmp);
+	}
+
+	void		debug_draw_line(std::vector<Object> &list, const Line &line)
+	{
+		for (unsigned i = 0; i <= 100; ++i)
+			add_sphere(list, line.origin + line.dir * line.length * i / 100.0f,
+				0.15f);
 	}
 }

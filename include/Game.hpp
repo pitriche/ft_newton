@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:13:45 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/15 18:57:59 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/11/02 10:07:18 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ struct Game
 		float			look_yaw;	/* applied before pitch */
 		float			look_pitch;
 
-		std::vector<Object>	obj;	/* All objects */
+		std::vector<Object>	obj;	/* Game objects */
+		std::vector<Object>	debug;	/* Debug spheres */
 
 
 	private :

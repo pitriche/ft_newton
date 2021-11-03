@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/19 21:03:42 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/19 12:56:00 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/11/02 10:19:06 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,20 @@ static void	_draw_objects(const Game &game)
 		sizeof(float)), spheres_mat.data(), GL_DYNAMIC_DRAW);
 	glUniform1i(all.gl.uniform.object_type, 1);
 	glUniform1i(all.gl.uniform.color, 0x80ff80);
+	glDrawArraysInstanced(GL_TRIANGLES, 36, 60 * 4 * 4,
+		(GLsizei)(spheres_mat.size() / 16));
+
+	/* draw debug spheres */
+	spheres_mat.clear();
+	spheres_mat.reserve(game.debug.size() * 16);
+	for (const Object &sphere : game.debug)
+		_push_matrix(spheres_mat, (Matrix() * (sphere.radius * 2.0f))
+			.translate(sphere.position).transpose());
+	
+	glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(spheres_mat.size() *
+		sizeof(float)), spheres_mat.data(), GL_DYNAMIC_DRAW);
+	glUniform1i(all.gl.uniform.object_type, 1);
+	glUniform1i(all.gl.uniform.color, 0xff8080);
 	glDrawArraysInstanced(GL_TRIANGLES, 36, 60 * 4 * 4,
 		(GLsizei)(spheres_mat.size() / 16));
 }

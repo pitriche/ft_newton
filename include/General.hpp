@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 13:52:16 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/22 17:31:09 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/11/02 11:34:14 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@
 # define LOOK_CAP_PITCH			1.55f	/* in radian */
 # define LOOK_CAP_PITCH_LOCK	0.02f
 # define POS_CAP_Y				0.1f	/* in m */
-# define CAMERA_SPEED			1.5f	/* in m/s */
+# define CAMERA_SPEED			2.5f	/* in m/s */
 
 /* ########################################################################## */
 
