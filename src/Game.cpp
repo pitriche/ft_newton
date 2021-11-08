@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/11/03 17:56:24 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/11/05 16:27:04 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,35 +69,35 @@ void	Game::init(void)
 	this->pos[1] = 1.0f;
 	this->pos_locked = 8.0f;
 
-	// const int MULT = 8;
-	// for (unsigned k = 0; k < MULT; ++k) for (unsigned j = 0; j < MULT; ++j) for (unsigned i = 0; i < MULT; ++i)
-	// {
-	// 	// _add_cube(this->obj, {k * 1.0f + 5.0f, j * 1.0f + 0.5f, i * 1.0f + 2.0f}, 0.5f);
-	// 	_add_sphere(this->obj, {k * -5.0f - 5.0f, j * 6.9f + 0.5f, i * 5.0f}, 5, 10);
-	// }
+	const int MULT = 8;
+	for (unsigned k = 0; k < MULT; ++k) for (unsigned j = 0; j < MULT; ++j) for (unsigned i = 0; i < MULT; ++i)
+	{
+		// _add_cube(this->obj, {k * 1.0f + 5.0f, j * 1.0f + 0.5f, i * 1.0f + 2.0f}, 0.5f);
+		_add_sphere(this->obj, {k * -5.0f - 5.0f, j * 6.9f + 0.5f, i * 5.0f}, 5, 10);
+	}
 	// /* cardinal boxes */
 	// _add_cube(this->obj, {5, 5, 0}, {0.5f, 2, 0.5f}, {0, 0, 1.57f}, 1);
 	// _add_cube(this->obj, {0, 5, 5}, {0.2f, 4, 0.2f}, {1.57f, 0, 0}, 1);
 	// _add_cube(this->obj, {0, 5, 0}, {0.6f, 3, 0.6f}, {0, 0, 0}, 1);
 
-	/* tower */
-	_add_cube(this->obj, {0, 3, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
-	this->obj.back().angular_velocity = {0, -10, 0};
-	_add_cube(this->obj, {0, 5, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
-	_add_cube(this->obj, {0, 7, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
-	this->obj.back().angular_velocity = {0, 10, 0};
-	_add_sphere(this->obj, {0, 9, -5}, 1, 1.5f);
+	// /* tower */
+	// _add_cube(this->obj, {0, 3, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
+	// this->obj.back().angular_velocity = {0, -10, 0};
+	// _add_cube(this->obj, {0, 5, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
+	// _add_cube(this->obj, {0, 7, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
+	// this->obj.back().angular_velocity = {0, 10, 0};
+	// _add_sphere(this->obj, {0, 9, -5}, 1, 1.5f);
 
-	/* flat cube arch */
-	_add_cube(this->obj, {-5, 1, 5}, {2, 2, 2}, {0, 0, 0}, 100);
-	_add_cube(this->obj, {-5, 3, 5}, {1.9f, 2, 1.9f}, {0, 0, 0}, 100);
-	_add_cube(this->obj, {-5, 5, 5}, {1.8f, 2, 1.8f}, {0, 0, 0}, 100);
-	_add_cube(this->obj, {-5, 7, 5}, {1.7f, 2, 1.7f}, {0, 0, 0}, 100);
+	// /* flat cube arch */
+	// _add_cube(this->obj, {-5, 1, 5}, {2, 2, 2}, {0, 0, 0}, 100);
+	// _add_cube(this->obj, {-5, 3, 5}, {1.9f, 2, 1.9f}, {0, 0, 0}, 100);
+	// _add_cube(this->obj, {-5, 5, 5}, {1.8f, 2, 1.8f}, {0, 0, 0}, 100);
+	// _add_cube(this->obj, {-5, 7, 5}, {1.7f, 2, 1.7f}, {0, 0, 0}, 100);
 
-	_add_cube(this->obj, {-8, 1, 5}, {2, 2, 2}, {0, 0, 0}, 100);
-	_add_cube(this->obj, {-8, 3, 5}, {1.9f, 2, 1.9f}, {0, 0, 0}, 100);
-	_add_cube(this->obj, {-8, 5, 5}, {1.8f, 2, 1.8f}, {0, 0, 0}, 100);
-	_add_cube(this->obj, {-8, 7, 5}, {1.7f, 2, 1.7f}, {0, 0, 0}, 100);
+	// _add_cube(this->obj, {-8, 1, 5}, {2, 2, 2}, {0, 0, 0}, 100);
+	// _add_cube(this->obj, {-8, 3, 5}, {1.9f, 2, 1.9f}, {0, 0, 0}, 100);
+	// _add_cube(this->obj, {-8, 5, 5}, {1.8f, 2, 1.8f}, {0, 0, 0}, 100);
+	// _add_cube(this->obj, {-8, 7, 5}, {1.7f, 2, 1.7f}, {0, 0, 0}, 100);
 
 
 
@@ -126,11 +126,11 @@ void	Game::init(void)
 	// _add_cube(this->obj, {5, 2, 0}, {1, 4, 9}, {0, 0, 0}, 1000000);
 	// _add_cube(this->obj, {-5, 2, 0}, {1, 4, 9}, {0, 0, 0}, 1000000);
 
-	_add_cube(this->obj, {0, 1.5, 2}, {2, 2, 2}, {(float)-M_PI_4, 0, (float)-M_PI_2}, 1000);
+	// _add_cube(this->obj, {0, 1.5, 2}, {2, 2, 2}, {(float)-M_PI_4, 0, (float)-M_PI_2}, 1000);
 	// this->obj[0].angular_velocity = {1, 2, 0.3};
 	
 	// _add_sphere(this->obj, {1, 15, 6}, 1.5f, 10);
-	_add_cube(this->obj, {0, 7.5, 2}, {1, 1, 1}, {0, 0, 0}, 100);
+	// _add_cube(this->obj, {0, 7.5, 2}, {1, 1, 1}, {0, 0, 0}, 100);
 	// _add_cube(this->obj, {0.117f, 1.542f, 1.255f}, {1, 1, 1}, {0, 0, 0}, 100);
 }
 
