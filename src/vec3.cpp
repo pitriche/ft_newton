@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/11/02 17:58:57 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/11/10 17:25:41 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,24 @@ vec3			operator+(const vec3 &lhs, const vec3 &rhs)
 float			operator*(const vec3 &lhs, const vec3 &rhs)
 { return (lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2]); }
 
+/*
+	cross product
+	R = A x B
+	Rx = Ay * Bz - Az * By
+	Ry = Az * Bx - Ax * Bz
+	Rz = Ax * By - Ay * Bx
+*/
+vec3			vec3_cross_product(const vec3 &lhs, const vec3 &rhs)
+{
+	vec3	ret;
+
+	ret[0] = lhs[1] * rhs[2] - lhs[2] * rhs[1];
+	ret[1] = lhs[2] * rhs[0] - lhs[0] * rhs[2];
+	ret[2] = lhs[0] * rhs[1] - lhs[1] * rhs[0];
+	return (ret);
+}
+
+
 float			vec3_length(const vec3 &vec)
 { return (std::sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2])); }
 
@@ -152,4 +170,34 @@ void			vec3_rotate_inverse(vec3 &vec, const vec3 &rotation)
 	vec3_rotate(vec, 0, -rotation[1], 0);	/* Y */
 	vec3_rotate(vec, -rotation[0], 0, 0);	/* X */
 	vec3_rotate(vec, 0, 0, -rotation[2]);	/* Z */
+}
+
+void			vec3_rotate_euler(vec3 &vec, const vec3 &euler_vector)
+{
+	vec3	tmp;
+	vec3	rotation[3];
+	vec3	axis;
+	float	theta;
+	float	cos_th;
+	float	sin_th;
+
+	theta = vec3_length(euler_vector);
+	if (theta == 0.0f)
+		return ;
+	axis = euler_vector * (1 / theta);
+	cos_th = std::cos(theta);
+	sin_th = std::sin(theta);
+	rotation[0][0] = (1 - cos_th) * axis[0] * axis[0] + cos_th;
+	rotation[0][1] = (1 - cos_th) * axis[0] * axis[1] - sin_th * axis[2];
+	rotation[0][2] = (1 - cos_th) * axis[0] * axis[2] + sin_th * axis[1];
+	rotation[1][0] = (1 - cos_th) * axis[1] * axis[0] + sin_th * axis[2];
+	rotation[1][1] = (1 - cos_th) * axis[1] * axis[1] + cos_th;
+	rotation[1][2] = (1 - cos_th) * axis[1] * axis[2] - sin_th * axis[0];
+	rotation[2][0] = (1 - cos_th) * axis[2] * axis[0] - sin_th * axis[1];
+	rotation[2][1] = (1 - cos_th) * axis[2] * axis[1] + sin_th * axis[0];
+	rotation[2][2] = (1 - cos_th) * axis[2] * axis[2] + cos_th;
+	tmp = vec;
+	vec[0] = rotation[0] * tmp;
+	vec[1] = rotation[1] * tmp;
+	vec[2] = rotation[2] * tmp;
 }

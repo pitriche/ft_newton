@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/11/03 17:56:59 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/11/11 17:13:47 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,47 @@
 #include <cmath>		/* abs */
 #include "All.hpp"		/* to get delta time for arbitrary operations */
 
-/* collision computation, NOT solving. Normal must be normalized */
-static void	_compute_collision(Object &obj1, Object &obj2, const vec3 &normal)
+/* compute angular velocity change, return the remaining amount of impulse */
+static float	_compute_rotation(Object &cube, const vec3 &normal, const vec3
+	&impact, float impulse)
+{
+	vec3	axis;		/* rotation axis of the collision */
+	float	dist;		/* distance of the moment of force's arm */
+	float	angular_impulse;
+	float	moment_of_inertia;
+	float	d_omega;	/* angular velocity change */
+	float	conversion;	/* ratio of impulse converted to rotation energy */
+
+	axis = vec3_cross_product(normal, cube.position - impact);
+	dist = vec3_length(axis); /* can be negative i think */ /* no it can't be negative you absolute buffoon */
+	conversion = dist / Utils::max3(cube.dimension);
+
+	std::cout << "Impact at " << impact << " axis " << vec3_normalize(axis) << std::endl;
+	std::cout << "Conversion " << (1.0f - conversion) * 100.0f << '%' << std::endl;
+	if (dist == 0)	/* if distance is 0, there is no rotation */
+		return (1.0f);
+	angular_impulse = impulse * dist;
+	moment_of_inertia = cube.mass * Utils::square(cube.radius * 2) / 6.0f;	////////////////////////////////////////////////////////////// find moment of inertia
+	d_omega = angular_impulse / moment_of_inertia;
+	cube.angular_velocity += vec3_normalize(axis) * d_omega;	/* apply */
+
+	/* omega damping */
+	std::cout << "Impact impulse euler vector" << vec3_normalize(axis) * d_omega << std::endl;
+	std::cout << "Impact delta omega " << d_omega << std::endl;
+	cube.angular_velocity *= 0.8;
+	return (1.0f - conversion);
+}
+
+/* collision linear velocity change, then angular */
+static void		_compute_collision(Object &obj1, Object &obj2, const vec3
+	&normal, const vec3 &impact)
 {
 	vec3	Dp;			/* positive delta momentum, obj1's momentum change */
 	float	Dp_scale;	/* delta p's scale */
 	float	v1;			/* obj1's velocity projected to impact normal */
 	float	v2;			/* obj2's velocity projected to impact normal */
-
+	float	conversion1;	/* obj1's linear / rotational impulse ratio */
+	float	conversion2;	/* obj2's linear / rotational impulse ratio */
 
 	Dp = normal;
 	v1 = obj1.velocity * normal;
@@ -34,14 +67,21 @@ static void	_compute_collision(Object &obj1, Object &obj2, const vec3 &normal)
 		Dp_scale /= 2 - COEFF_OF_RESTITUTION;
 	Dp *= Dp_scale;
 
-	obj1.velocity += Dp / obj1.mass;
-	obj2.velocity -= Dp / obj2.mass;
 	obj1.rest = false;
 	obj2.rest = false;
+	conversion1 = 1.0f;
+	conversion2 = 1.0f;
+	if (obj1.type == Cube)
+		conversion1 = _compute_rotation(obj1, normal, impact, Dp_scale / 2.0f);
+	if (obj2.type == Cube)
+		conversion2 = _compute_rotation(obj2, normal * -1.0f, impact, Dp_scale
+			/ 2.0f);
+	obj1.velocity += Dp * conversion1 / obj1.mass;
+	obj2.velocity -= Dp * conversion2 / obj2.mass;
 }
 
 /* self explanatory, solve the collision by displacing the lightest object*/
-static void	_solve_collision(Object &obj1, Object &obj2, const vec3 &solution)
+static void		_solve_collision(Object &obj1, Object &obj2, const vec3 &solution)
 {
 	if (obj1.type == Sphere && obj2.type == Sphere)
 	{
@@ -84,14 +124,20 @@ static void	_sphere_floor_collision(Object &obj)
 static void	_cube_floor_collision(Object &obj)
 {
 	float	above_ground;
+	vec3	impact;
 
 	/* secondary collison check for cube */
 	above_ground = INFINITY;
 	for (vec3 &vec : obj.points)
 		if (vec[1] < above_ground)
+		{
 			above_ground = vec[1];
+			impact = vec;
+		}
 	if (above_ground > 0.001f)	/* to avoid rounding errors */
 		return ;
+
+	_compute_rotation(obj, {0, 1, 0}, impact, -obj.velocity[1] * obj.mass * 1);
 
 	/* inelastic collision and ground friction */
 	if (abs(obj.velocity[1]) <= INELASTIC_SPEED)
@@ -104,6 +150,8 @@ static void	_cube_floor_collision(Object &obj)
 	/* partially elastic collision */
 	obj.position[1] -= above_ground;
 	obj.velocity[1] *= -COEFF_OF_RESTITUTION;
+	std::cout << "rrrottate\n";
+	// _compute_rotation(obj, {0, 1, 0}, impact, obj.velocity[1] * obj.mass * 2);
 }
 
 /* ########################################################################## */
@@ -123,9 +171,9 @@ static bool	_cube_line_collision(Object &cube, Line line)
 
 	/* axis align the cube, with lower, closest left cornet at origin */
 	line.origin -= cube.position;
-	vec3_rotate_inverse(line.origin, cube.angular_position);
+	vec3_rotate_inverse(line.origin, cube.angular_position);///////////////////////////////////////////////////////////////////////here
 	line.origin += cube.dimension * 0.5f;
-	vec3_rotate_inverse(line.dir, cube.angular_position);
+	vec3_rotate_inverse(line.dir, cube.angular_position);///////////////////////////////////////////////////////////////////////here
 
 	for (unsigned axis = 0; axis < 3; ++axis)
 	{
@@ -210,7 +258,7 @@ static bool	_cube_cube_collision_type0(Object &cube, Object &cube2)
 	for (unsigned i = 0; i < 8; ++i)
 	{
 		relative_pos_abs = cube2.points[i] - cube.position;
-		vec3_rotate_inverse(relative_pos_abs, cube.angular_position);
+		vec3_rotate_inverse(relative_pos_abs, cube.angular_position); /////////////////////////////////////////////here
 		for (unsigned axis_vec = 0; axis_vec < 3; ++axis_vec)
 			axis_positive[axis_vec] = (relative_pos_abs[axis_vec] >= 0.0f);
 		for (float &f : relative_pos_abs)
@@ -221,7 +269,7 @@ static bool	_cube_cube_collision_type0(Object &cube, Object &cube2)
 			axis = Utils::max3_id(intersect);
 			normal = cube.normals[axis] * (axis_positive[axis] ? 1.0f : -1.0f);
 			_solve_collision(cube, cube2, normal * -intersect[axis]);
-			_compute_collision(cube, cube2, normal);
+			_compute_collision(cube, cube2, normal, {0, 0, 0}); ///////////////////////////////////////////////// impact
 			cube2.compute_points();	/* update points after each collision */
 			collision = true;
 		}
@@ -229,6 +277,10 @@ static bool	_cube_cube_collision_type0(Object &cube, Object &cube2)
 	_solve_cube_cube_secondary(cube, cube2);
 	return (collision);
 }
+
+/*
+cube rotations when impact points are negative seem to bug 
+*/
 
 static bool	_cube_cube_collision_type1(Object &cube, Object &cube2)	
 {
@@ -251,7 +303,7 @@ static bool	_cube_cube_collision_type1(Object &cube, Object &cube2)
 			(all.time.delta / 1000000000.0f);
 
 			_solve_collision(cube, cube2, normal * solution);
-			_compute_collision(cube, cube2, normal);
+			_compute_collision(cube, cube2, normal, {0, 0, 0}); ///////////////////////////////////////////////// impact
 			return (true);
 		}
 	}
@@ -288,6 +340,7 @@ static void	_cube_sphere_type0(Object &cube, Object &sphere, vec3 &relative_pos,
 	unsigned axis)
 {
 	vec3	normal;		/* type 0 impact normal */
+	vec3	impact;
 	float	solution;
 
 	normal = cube.normals[axis] * ((relative_pos[axis] > 0) ? 1.0f : -1.0f);
@@ -299,13 +352,37 @@ static void	_cube_sphere_type0(Object &cube, Object &sphere, vec3 &relative_pos,
 	// sphere.position += normal * solution;
 
 	/* compute collision */
-	_compute_collision(cube, sphere, normal);
+	impact = sphere.position + normal * sphere.radius;
+	std::cout << sphere.position <<" + "<< cube.normals[axis] <<" * "<<  sphere.radius << " There it is\n";
+	_compute_collision(cube, sphere, normal, impact); ///////////////////////////////////////////////// impact ////////////////////////////////////////
 }
+
+/*
+
+/\
+||
+||
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 static void	_cube_sphere_type12(Object &cube, Object &sphere,
 	vec3 &relative_pos, vec3 &relative_pos_abs, bool sure_axis[3])
 {
 	vec3	normal;		/* type 1 / 2 normal, move this up */
+	vec3	impact;		/* impact point */
 	float	solution;	/* for type 0 solving */
 	float	corner_dist_sq;
 	
@@ -328,7 +405,8 @@ static void	_cube_sphere_type12(Object &cube, Object &sphere,
 		solution = sphere.radius - std::sqrt(corner_dist_sq);
 		// _solve_collision(cube, sphere, normal * solution);
 		sphere.position -= normal * solution;
-		_compute_collision(cube, sphere, normal);
+		impact = sphere.position + normal * sphere.radius;
+		_compute_collision(cube, sphere, normal, impact);
 	}
 }
 
@@ -345,7 +423,11 @@ static void	_cube_sphere_collision(Object &cube, Object &sphere)
 	vec3	relative_pos_abs;
 
 	relative_pos = sphere.position - cube.position;
-	vec3_rotate_inverse(relative_pos, cube.angular_position);
+	// vec3_rotate_inverse(relative_pos, cube.angular_position); ///////////////////////////////////////////////////////////////////////here
+	vec3_rotate_euler(relative_pos, cube.angular_position * -1);
+	
+	
+	
 	relative_pos_abs = relative_pos;
 
 	for (float &f : relative_pos_abs)	/* checks done with absolute values */
@@ -392,7 +474,7 @@ static void	_sphere_sphere_collision(Object &obj1, Object &obj2, vec3 solution)
 
 	normal = solution;
 	vec3_normalize(normal);
-	_compute_collision(obj1, obj2, normal);
+	_compute_collision(obj1, obj2, normal, {0, 0, 0});
 }
 
 /* ########################################################################## */

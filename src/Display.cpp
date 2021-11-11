@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/19 21:03:42 by pitriche          #+#    #+#             */
-/*   Updated: 2021/11/02 10:19:06 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/11/10 16:11:16 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static void	_draw_objects(const Game &game)
 		{
 			case Cube :
 				_push_matrix(cubes_mat, Matrix().scale(obj.dimension)
-					.rotate(obj.angular_position)
+					.rotate_euler(obj.angular_position)
 					.translate(obj.position).transpose());
 				break ;
 			case Sphere :

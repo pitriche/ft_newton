@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/11/02 17:54:07 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/11/10 17:15:54 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,25 +39,35 @@ void	Object::compute_points(void)
 {
 	vec3	tmp;
 	vec3	rotation[3];
-	float	cos_x, cos_y, cos_z;
-	float	sin_x, sin_y, sin_z;
+	vec3	axis;
+	float	theta;
+	float	cos_th;
+	float	sin_th;
 
 	/* compute rotation matrix only once for optimization */
-	cos_x = cos(this->angular_position[0]);
-	cos_y = cos(this->angular_position[1]);
-	cos_z = cos(this->angular_position[2]);
-	sin_x = sin(this->angular_position[0]);
-	sin_y = sin(this->angular_position[1]);
-	sin_z = sin(this->angular_position[2]);
-	rotation[0][0] = cos_z * cos_y + sin_z * sin_x * sin_y;
-	rotation[0][1] = -sin_z * cos_y + cos_z * sin_x * sin_y;
-	rotation[0][2] = cos_x * sin_y;
-	rotation[1][0] = sin_z * cos_x;
-	rotation[1][1] = cos_z * cos_x;
-	rotation[1][2] = -sin_x;
-	rotation[2][0] = -cos_z * sin_y + sin_z * sin_x * cos_y;
-	rotation[2][1] = sin_z * sin_y + cos_z * sin_x * cos_y;
-	rotation[2][2] = cos_x * cos_y;
+	theta = vec3_length(this->angular_position);
+	if (theta != 0.0f)
+	{
+		axis = this->angular_position * (1 / theta);
+		cos_th = std::cos(theta);
+		sin_th = std::sin(theta);
+		rotation[0][0] = (1 - cos_th) * axis[0] * axis[0] + cos_th;
+		rotation[0][1] = (1 - cos_th) * axis[0] * axis[1] - sin_th * axis[2];
+		rotation[0][2] = (1 - cos_th) * axis[0] * axis[2] + sin_th * axis[1];
+		rotation[1][0] = (1 - cos_th) * axis[1] * axis[0] + sin_th * axis[2];
+		rotation[1][1] = (1 - cos_th) * axis[1] * axis[1] + cos_th;
+		rotation[1][2] = (1 - cos_th) * axis[1] * axis[2] - sin_th * axis[0];
+		rotation[2][0] = (1 - cos_th) * axis[2] * axis[0] - sin_th * axis[1];
+		rotation[2][1] = (1 - cos_th) * axis[2] * axis[1] + sin_th * axis[0];
+		rotation[2][2] = (1 - cos_th) * axis[2] * axis[2] + cos_th;
+	}
+	else
+	{
+		rotation[0] = {1, 0, 0};
+		rotation[1] = {0, 1, 0};
+		rotation[2] = {0, 0, 1};
+	}
+	
 
 	/* Clockwise, top then bottom, all positive (far right) first */
 	this->points[0] = {0.5f, 0.5f, 0.5f};

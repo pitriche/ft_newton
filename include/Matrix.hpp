@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:13:45 by pitriche          #+#    #+#             */
-/*   Updated: 2021/10/13 15:34:30 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/11/10 15:56:19 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ struct Matrix : public std::array<float, 16>
 		Matrix	&scale(float x, float y, float z);
 		
 		Matrix	&rotate(const vec3 &rotation);
+		Matrix	&rotate_euler(const vec3 &euler_vector);
 		Matrix	&translate(const vec3 &translation);
 		Matrix	&scale(const vec3 &scaling);
 
