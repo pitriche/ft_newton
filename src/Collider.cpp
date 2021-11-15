@@ -6,7 +6,7 @@
 /*   By: pitriche <pitriche@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 11:14:54 by pitriche          #+#    #+#             */
-/*   Updated: 2021/11/11 17:13:47 by pitriche         ###   ########.fr       */
+/*   Updated: 2021/11/15 14:39:27 by pitriche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,11 @@ static float	_compute_rotation(Object &cube, const vec3 &normal, const vec3
 	dist = vec3_length(axis); /* can be negative i think */ /* no it can't be negative you absolute buffoon */
 	conversion = dist / Utils::max3(cube.dimension);
 
+
+	Utils::add_sphere(all.game.debug, impact, 0.7f);
+	Utils::debug_draw_line(all.game.debug, Line(cube.position, cube.position + axis * 10));;
 	std::cout << "Impact at " << impact << " axis " << vec3_normalize(axis) << std::endl;
+	std::cout << "Impact normal " << normal << std::endl;
 	std::cout << "Conversion " << (1.0f - conversion) * 100.0f << '%' << std::endl;
 	if (dist == 0)	/* if distance is 0, there is no rotation */
 		return (1.0f);
@@ -43,7 +47,7 @@ static float	_compute_rotation(Object &cube, const vec3 &normal, const vec3
 	/* omega damping */
 	std::cout << "Impact impulse euler vector" << vec3_normalize(axis) * d_omega << std::endl;
 	std::cout << "Impact delta omega " << d_omega << std::endl;
-	cube.angular_velocity *= 0.8;
+	cube.angular_velocity *= 1;
 	return (1.0f - conversion);
 }
 
