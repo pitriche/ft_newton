@@ -32,11 +32,14 @@ static float	_compute_rotation(Object &cube, const vec3 &normal, const vec3
 	conversion = dist / Utils::max3(cube.dimension);
 
 
-	Utils::add_sphere(all.game.debug, impact, 0.7f);
-	Utils::debug_draw_line(all.game.debug, Line(cube.position, cube.position + axis * 10));;
-	std::cout << "Impact at " << impact << " axis " << vec3_normalize(axis) << std::endl;
-	std::cout << "Impact normal " << normal << std::endl;
-	std::cout << "Conversion " << (1.0f - conversion) * 100.0f << '%' << std::endl;
+	if (all.event.key.debug_impact)
+	{
+		Utils::add_sphere(all.game.debug, impact, 0.7f);
+		Utils::debug_draw_line(all.game.debug, Line(cube.position, cube.position + axis * 10));;
+	}
+	// std::cout << "Impact at " << impact << " axis " << vec3_normalize(axis) << std::endl;
+	// std::cout << "Impact normal " << normal << std::endl;
+	// std::cout << "Conversion " << (1.0f - conversion) * 100.0f << '%' << std::endl;
 	if (dist == 0)	/* if distance is 0, there is no rotation */
 		return (1.0f);
 	angular_impulse = impulse * dist;
@@ -45,8 +48,8 @@ static float	_compute_rotation(Object &cube, const vec3 &normal, const vec3
 	cube.angular_velocity += vec3_normalize(axis) * d_omega;	/* apply */
 
 	/* omega damping */
-	std::cout << "Impact impulse euler vector" << vec3_normalize(axis) * d_omega << std::endl;
-	std::cout << "Impact delta omega " << d_omega << std::endl;
+	// std::cout << "Impact impulse euler vector" << vec3_normalize(axis) * d_omega << std::endl;
+	// std::cout << "Impact delta omega " << d_omega << std::endl;
 	cube.angular_velocity *= 1;
 	return (1.0f - conversion);
 }
@@ -154,8 +157,6 @@ static void	_cube_floor_collision(Object &obj)
 	/* partially elastic collision */
 	obj.position[1] -= above_ground;
 	obj.velocity[1] *= -COEFF_OF_RESTITUTION;
-	std::cout << "rrrottate\n";
-	// _compute_rotation(obj, {0, 1, 0}, impact, obj.velocity[1] * obj.mass * 2);
 }
 
 /* ########################################################################## */
@@ -351,36 +352,11 @@ static void	_cube_sphere_type0(Object &cube, Object &sphere, vec3 &relative_pos,
 	solution = cube.dimension[axis] / 2.0f -
 	(abs(relative_pos[axis]) - sphere.radius);
 
-	/* solve collision by moving sphere away */
+	/* solve, then compute collision */
 	_solve_collision(sphere, cube, normal * -solution);
-	// sphere.position += normal * solution;
-
-	/* compute collision */
 	impact = sphere.position + normal * sphere.radius;
-	std::cout << sphere.position <<" + "<< cube.normals[axis] <<" * "<<  sphere.radius << " There it is\n";
-	_compute_collision(cube, sphere, normal, impact); ///////////////////////////////////////////////// impact ////////////////////////////////////////
+	_compute_collision(cube, sphere, normal, impact);
 }
-
-/*
-
-/\
-||
-||
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 static void	_cube_sphere_type12(Object &cube, Object &sphere,
 	vec3 &relative_pos, vec3 &relative_pos_abs, bool sure_axis[3])
@@ -403,12 +379,11 @@ static void	_cube_sphere_type12(Object &cube, Object &sphere,
 	if (corner_dist_sq < Utils::square(sphere.radius))
 	{
 		vec3_normalize(normal);
-		vec3_rotate(normal, cube.angular_position);
+		vec3_rotate_euler(normal, cube.angular_position);
+		solution = sphere.radius - std::sqrt(corner_dist_sq);
 
 		/* solve, then compute collision */
-		solution = sphere.radius - std::sqrt(corner_dist_sq);
-		// _solve_collision(cube, sphere, normal * solution);
-		sphere.position -= normal * solution;
+		_solve_collision(cube, sphere, normal * -solution);
 		impact = sphere.position + normal * sphere.radius;
 		_compute_collision(cube, sphere, normal, impact);
 	}
@@ -427,13 +402,9 @@ static void	_cube_sphere_collision(Object &cube, Object &sphere)
 	vec3	relative_pos_abs;
 
 	relative_pos = sphere.position - cube.position;
-	// vec3_rotate_inverse(relative_pos, cube.angular_position); ///////////////////////////////////////////////////////////////////////here
 	vec3_rotate_euler(relative_pos, cube.angular_position * -1);
-	
-	
-	
-	relative_pos_abs = relative_pos;
 
+	relative_pos_abs = relative_pos;
 	for (float &f : relative_pos_abs)	/* checks done with absolute values */
 		f = std::abs(f);
 

@@ -52,6 +52,29 @@ static void	_push_matrix(std::vector<float> &mat_array, const Matrix &mat)
 	mat_array.insert(mat_array.end(), mat.begin(), mat.end());
 }
 
+static void	_draw_catapult(const Game &game)
+{
+	std::vector<float>	cubes_mat;
+	Matrix				tmp;
+
+	for (const Object &obj : game.sling)
+	{
+		tmp = Matrix().scale(obj.dimension)
+			.rotate_euler(obj.angular_position)
+			.translate(obj.position)
+			.rotate(game.look_pitch, game.look_yaw, 0)
+			.translate(game.pos).transpose();
+		_push_matrix(cubes_mat, tmp);
+	}
+	glBindBuffer(GL_ARRAY_BUFFER, all.gl.terrain.vbo_matrix);
+	glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(cubes_mat.size() *
+		sizeof(float)), cubes_mat.data(), GL_DYNAMIC_DRAW);
+	glUniform1i(all.gl.uniform.object_type, 0);
+	glUniform1i(all.gl.uniform.color, 0x8b4513);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 36, (GLsizei)(cubes_mat.size() /
+			16));
+}
+
 static void	_draw_objects(const Game &game)
 {
 	std::vector<float>	spheres_mat;
@@ -78,6 +101,12 @@ static void	_draw_objects(const Game &game)
 		}
 	}
 
+	if (all.event.key.debug_display) /* enable wireframe if needed */
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDisable	(GL_CULL_FACE);
+	}
+
 	/* draw cubes */
 	glBindBuffer(GL_ARRAY_BUFFER, all.gl.terrain.vbo_matrix);
 	glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(cubes_mat.size() *
@@ -85,8 +114,8 @@ static void	_draw_objects(const Game &game)
 	glUniform1i(all.gl.uniform.object_type, 0);
 	glUniform1i(all.gl.uniform.color, 0x8080ff);
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 36, (GLsizei)(cubes_mat.size() /
-		16));
-	
+			16));
+
 	/* draw spheres */
 	glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(spheres_mat.size() *
 		sizeof(float)), spheres_mat.data(), GL_DYNAMIC_DRAW);
@@ -95,19 +124,24 @@ static void	_draw_objects(const Game &game)
 	glDrawArraysInstanced(GL_TRIANGLES, 36, 60 * 4 * 4,
 		(GLsizei)(spheres_mat.size() / 16));
 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); /* disable wireframe */
+	glEnable(GL_CULL_FACE);
+
 	/* draw debug spheres */
 	spheres_mat.clear();
 	spheres_mat.reserve(game.debug.size() * 16);
 	for (const Object &sphere : game.debug)
 		_push_matrix(spheres_mat, (Matrix() * (sphere.radius * 2.0f))
 			.translate(sphere.position).transpose());
-	
 	glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(spheres_mat.size() *
 		sizeof(float)), spheres_mat.data(), GL_DYNAMIC_DRAW);
 	glUniform1i(all.gl.uniform.object_type, 1);
 	glUniform1i(all.gl.uniform.color, 0xff8080);
 	glDrawArraysInstanced(GL_TRIANGLES, 36, 60 * 4 * 4,
 		(GLsizei)(spheres_mat.size() / 16));
+	
+	if (all.event.key.mouse_middle)	/* draw catapult */
+		_draw_catapult(game);
 }
 
 static void	_draw_floor(void)

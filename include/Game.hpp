@@ -42,6 +42,7 @@ struct Game
 
 		std::vector<Object>	obj;	/* Game objects */
 		std::vector<Object>	debug;	/* Debug spheres */
+		std::vector<Object>	sling;	/* catapult 3d model */
 
 
 	private :

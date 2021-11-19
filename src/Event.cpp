@@ -60,7 +60,6 @@ void	Event::_keychange(SDL_Keycode kc, bool key_state)
 		case (SDLK_d) : this->key.d = key_state; break;
 		case (SDLK_LSHIFT) : this->key.lshift = key_state; break;
 		case (SDLK_SPACE) : this->key.space = key_state; break;
-		case (SDLK_q) : this->key.object_auto ^= key_state; break;
 	}
 
 	if (!key_state)	/* only on key press */
@@ -89,6 +88,9 @@ void	Event::_keychange(SDL_Keycode kc, bool key_state)
 		case (SDLK_COMMA) : this->key.time_speed *= 0.5f; break;
 		case (SDLK_SLASH) : this->key.time_speed = DEFAULT_TIME; break;
 		case (SDLK_RSHIFT) : this->key.time_speed = 1e-20f; break;
+		case (SDLK_q) : this->key.object_auto ^= 1; break;
+		case (SDLK_z) : this->key.debug_display ^= 1; break;
+		case (SDLK_e) : this->key.debug_impact ^= 1; break;
 	}
 	if ((kc == SDLK_EQUALS || kc == SDLK_MINUS) &&
 		isinf(this->key.max_distance))

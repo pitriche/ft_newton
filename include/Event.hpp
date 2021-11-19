@@ -45,6 +45,8 @@ struct Keys
 	float		time_speed;
 	float		gravity;
 
+	bool		debug_display;
+	bool		debug_impact;	/* display impacts and rotations */
 };
 
 /*

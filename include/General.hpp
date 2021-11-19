@@ -57,6 +57,12 @@
 
 /* ########################################################################## */
 
+# define BASE_CX			0.5f	/* subsonic drag coefficient */
+# define AIR_DENSITY		1.22f	/* air density at sea level in kg/m^3 */
+# define AIR_TEMPERATURE	293.15f	/* temperature at sea level in kelvins */
+
+/* ########################################################################## */
+
 /* vec3 pseudoclass */
 typedef std::array<float, 3>	vec3;
 

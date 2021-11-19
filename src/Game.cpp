@@ -69,6 +69,16 @@ void	Game::init(void)
 	this->pos[1] = 1.0f;
 	this->pos_locked = 8.0f;
 
+	/* Catapult */
+	_add_cube(this->sling, {-0.6, -0.6, 0}, {0.5, 2, 0.5}, {0, 0, 0.6}, 1); /* body */
+	_add_cube(this->sling, {0.6, -0.6, 0}, {0.5, 2, 0.5}, {0, 0, -0.6}, 1);
+	_add_cube(this->sling, {0, -2.4, 0}, {0.5, 2, 0.5}, {0, 0, 0}, 1);
+	_add_cube(this->sling, {0.6, 0, -0.5}, {0.25, 0.25, 1.5}, {0, 0.6, 0}, 1);	/* elastic */
+	_add_cube(this->sling, {-0.6, 0, -0.5}, {0.25, 0.25, 1.5}, {0, -0.6, 0}, 1);
+	_add_cube(this->sling, {0, 0, -1.1}, {0.75, 0.40, 0.2}, {0, 0, 0}, 1); /* pad */
+
+	/* objects */
+
 	// const int MULT = 8;
 	// for (unsigned k = 0; k < MULT; ++k) for (unsigned j = 0; j < MULT; ++j) for (unsigned i = 0; i < MULT; ++i)
 	// {
@@ -135,7 +145,7 @@ void	Game::init(void)
 
 
 	// _add_cube(this->obj, {0, 5.5, 0}, {1, 1, 1}, {1020, 200, 3000}, 2000);
-	_add_cube(this->obj, {0, 1.2, 0}, {1, 1, 1}, {0.3, 0, 0}, 2000);
+	_add_cube(this->obj, {0, 1.2, 0}, {1, 3, 5}, {0.3, 0, 0}, 2000);
 	this->obj.back().angular_velocity = {0, 0, 0};
 }
 
@@ -257,11 +267,40 @@ void		Game::_throw_object(const Keys &key)
 }
 
 /* ########################################################################## */
+/* #####################		Object and physics		##################### */
+/* ########################################################################## */
 
-static bool _compare_z(const Object &a, const Object &b)
+
+static bool 	_compare_z(const Object &a, const Object &b)
 { return (a.position[1] < b.position[1]); }
 
-void		Game::_update_objects(float delta, const Keys &key)
+static float	_compute_Cx(float mach)
+{
+	return (BASE_CX);
+}
+
+static void		_compute_drag(Object &obj, float delta)
+{
+	float	v2;				/* velocity squared */
+	float	q;				/* dynamic pressure */
+	float	speed_of_sound;
+	float	mach;			/* mach number */
+	float	area;			/* object surface area */
+	float	drag;			/* drag in newtons */
+
+	/* q= 1/2 * rho * V^2 */
+	v2 = Utils::square(obj.velocity[0]) + Utils::square(obj.velocity[1]) +
+	Utils::square(obj.velocity[2]);
+	q = 0.5 * AIR_DENSITY * v2;
+
+	area = Utils::square(obj.radius) * M_PI;
+	speed_of_sound = 20.05f	* std::sqrtf(AIR_TEMPERATURE);
+	mach = std::sqrt(v2) / speed_of_sound;
+	drag = _compute_Cx(mach) * area * q;
+	/* drag / obj.mass; */
+}
+
+void			Game::_update_objects(float delta, const Keys &key)
 {
 	int	obj_id;
 
@@ -274,10 +313,13 @@ void		Game::_update_objects(float delta, const Keys &key)
 			isnan(this->obj[i].position[1]) || isinf(this->obj[i].position[1]))
 			this->obj.erase(this->obj.begin() + i);
 
-	/* compute cube points */
+	/* compute cube points and apply drag */
 	for (Object &obj : this->obj)
+	{
 		if (obj.type == Cube)
 			obj.compute_points();
+		_compute_drag(obj, delta);
+	}
 
 	obj_id = 0;
 	for (Object &obj : this->obj)
