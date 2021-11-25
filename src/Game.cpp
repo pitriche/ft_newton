@@ -274,30 +274,64 @@ void		Game::_throw_object(const Keys &key)
 static bool 	_compare_z(const Object &a, const Object &b)
 { return (a.position[1] < b.position[1]); }
 
+/* compute drag coefficient from mach number, approximation of sound barrier */
 static float	_compute_Cx(float mach)
 {
-	return (BASE_CX);
+	if (mach < 0.6f)	/* mach [0 - 0.6] -> 1*base */
+		return (BASE_CX);
+	if (mach < 1.0f)	/* mach [0.6 - 1] -> 1-2.2*base */
+		return (BASE_CX * (1 + (-1.8f + 3 * mach)));
+	if (mach < 2.0f)	/* mach [1 - 2] -> 2.2-1.8*base */
+		return (BASE_CX * (1 + (1.3f - 0.2 * mach)));
+	else				/* mach > 2 -> 1.8*base */
+		return (BASE_CX * 1.8f);
+}
+
+/* compute air density from altitude, up to karman line */
+static float	_compute_q(float altitude)
+{
+	if (altitude < 11000.0f)	/* 1.225 - 0.36391 */
+		return (1.225 - (altitude / 11000) * 0.86109);
+	if (altitude < 20000.0f)	/* 0.36391 - 0.08803 */
+		return (0.36391 - ((altitude - 11000) / 9000) * 0.27588+-);
+	if (altitude < 32000.0f)	/* 0.08803 - 0.01322 */
+		return (1.225);
+	if (altitude < 47000.0f)	/* 0.01322 - 0.00143 */
+		return (1.225);
+	if (altitude < 47000.0f)	/* 0.00143 - 0.00086 */
+		return (1.225);
+	if (altitude < 100000.0f)	/* 0.00086 - 0 */
+		return (1.225);
+	else						/* above Karman line : q = 0 */
+		return (0.0f);
 }
 
 static void		_compute_drag(Object &obj, float delta)
 {
-	float	v2;				/* velocity squared */
-	float	q;				/* dynamic pressure */
-	float	speed_of_sound;
-	float	mach;			/* mach number */
-	float	area;			/* object surface area */
-	float	drag;			/* drag in newtons */
+	float	v2;			/* velocity squared */
+	float	v;			/* velocity */
+	float	q;			/* dynamic pressure */
+	float	mach;		/* mach number */
+	float	area;		/* object surface area */
+	float	drag;		/* drag in newtons */
+	float	a;			/* acceleration (deceleration) due to drag */
+	float	final_mult;	/* portion of the speed left after drag is applied */
 
 	/* q= 1/2 * rho * V^2 */
 	v2 = Utils::square(obj.velocity[0]) + Utils::square(obj.velocity[1]) +
 	Utils::square(obj.velocity[2]);
+	v = std::sqrt(v2);
 	q = 0.5 * AIR_DENSITY * v2;
 
+	/* Rx = q * A * Cx */
 	area = Utils::square(obj.radius) * M_PI;
-	speed_of_sound = 20.05f	* std::sqrtf(AIR_TEMPERATURE);
-	mach = std::sqrt(v2) / speed_of_sound;
+	mach = v / (20.05f * std::sqrtf(AIR_TEMPERATURE));
 	drag = _compute_Cx(mach) * area * q;
-	/* drag / obj.mass; */
+	a = drag / obj.mass;
+	final_mult = v != 0 ? ((v - (a * delta)) / v) : 1.0f;
+	Utils::float_cap(final_mult, MAX_DRAG_FRAME, 1.0f);	/* prevent reverse */
+	obj.velocity *= final_mult;
+	// std::cout << "Mach number=" << mach << " | Cx=" << _compute_Cx(mach) << std::endl;
 }
 
 void			Game::_update_objects(float delta, const Keys &key)

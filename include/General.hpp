@@ -60,6 +60,7 @@
 # define BASE_CX			0.5f	/* subsonic drag coefficient */
 # define AIR_DENSITY		1.22f	/* air density at sea level in kg/m^3 */
 # define AIR_TEMPERATURE	293.15f	/* temperature at sea level in kelvins */
+# define MAX_DRAG_FRAME		0.1f	/* minimum final_mult value */
 
 /* ########################################################################## */
 
