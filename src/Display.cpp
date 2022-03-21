@@ -112,7 +112,7 @@ static void	_draw_objects(const Game &game)
 	glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(cubes_mat.size() *
 		sizeof(float)), cubes_mat.data(), GL_DYNAMIC_DRAW);
 	glUniform1i(all.gl.uniform.object_type, 0);
-	glUniform1i(all.gl.uniform.color, 0x8080ff);
+	glUniform1i(all.gl.uniform.color, 0x8080ff); // all sides
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 36, (GLsizei)(cubes_mat.size() /
 			16));
 

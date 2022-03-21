@@ -50,7 +50,7 @@ static float	_compute_rotation(Object &cube, const vec3 &normal, const vec3
 	/* omega damping */
 	// std::cout << "Impact impulse euler vector" << vec3_normalize(axis) * d_omega << std::endl;
 	// std::cout << "Impact delta omega " << d_omega << std::endl;
-	cube.angular_velocity *= 1;
+	cube.angular_velocity *= 1.0f;
 	return (1.0f - conversion);
 }
 

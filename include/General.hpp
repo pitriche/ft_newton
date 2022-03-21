@@ -26,9 +26,14 @@
 
 /* ########################################################################## */
 
+/* they don't work. I tried hard but missed time */
+# define USE_ROTATIONS			false
+
+/* ########################################################################## */
+
 # define BASE_FPS				60		/* 0 for unlimited */
 
-# define MOUSE_SENSITIVITY_X	200	/* 1 = 100000 pixels/radian locked camera */
+# define MOUSE_SENSITIVITY_X	200		/* 1 = 100000 pixels/radian locked camera */
 # define MOUSE_SENSITIVITY_Y	200
 # define SCROLL_SENSITIVITY		300		/* 1 = 1000 scroll unit/meter */
 

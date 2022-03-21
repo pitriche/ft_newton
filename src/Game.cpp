@@ -70,12 +70,12 @@ void	Game::init(void)
 	this->pos_locked = 8.0f;
 
 	/* Catapult */
-	_add_cube(this->sling, {-0.6, -0.6, 0}, {0.5, 2, 0.5}, {0, 0, 0.6}, 1); /* body */
-	_add_cube(this->sling, {0.6, -0.6, 0}, {0.5, 2, 0.5}, {0, 0, -0.6}, 1);
-	_add_cube(this->sling, {0, -2.4, 0}, {0.5, 2, 0.5}, {0, 0, 0}, 1);
-	_add_cube(this->sling, {0.6, 0, -0.5}, {0.25, 0.25, 1.5}, {0, 0.6, 0}, 1);	/* elastic */
-	_add_cube(this->sling, {-0.6, 0, -0.5}, {0.25, 0.25, 1.5}, {0, -0.6, 0}, 1);
-	_add_cube(this->sling, {0, 0, -1.1}, {0.75, 0.40, 0.2}, {0, 0, 0}, 1); /* pad */
+	_add_cube(this->sling, {-0.6f, -0.6f, 0}, {0.5f, 2, 0.5f}, {0, 0, 0.6f}, 1); /* body */
+	_add_cube(this->sling, {0.6f, -0.6f, 0}, {0.5f, 2, 0.5f}, {0, 0, -0.6f}, 1);
+	_add_cube(this->sling, {0, -2.4f, 0}, {0.5f, 2, 0.5f}, {0, 0, 0}, 1);
+	_add_cube(this->sling, {0.6f, 0, -0.5f}, {0.25f, 0.25f, 1.5f}, {0, 0.6f, 0}, 1);	/* elastic */
+	_add_cube(this->sling, {-0.6f, 0, -0.5f}, {0.25f, 0.25f, 1.5f}, {0, -0.6f, 0}, 1);
+	_add_cube(this->sling, {0, 0, -1.1f}, {0.75f, 0.40f, 0.2f}, {0, 0, 0}, 1); /* pad */
 
 	/* objects */
 
@@ -144,8 +144,8 @@ void	Game::init(void)
 	// _add_cube(this->obj, {0.117f, 1.542f, 1.255f}, {1, 1, 1}, {0, 0, 0}, 100);
 
 
-	// _add_cube(this->obj, {0, 5.5, 0}, {1, 1, 1}, {1020, 200, 3000}, 2000);
-	_add_cube(this->obj, {0, 1.2, 0}, {1, 3, 5}, {0.3, 0, 0}, 2000);
+	// _add_cube(this->obj, {0, 5.5f, 0}, {1, 1, 1}, {1020, 200, 3000}, 2000);
+	_add_cube(this->obj, {0, 1.2f, 0}, {1, 3, 5}, {0.3f, 0, 0}, 2000);
 	this->obj.back().angular_velocity = {0, 0, 0};
 }
 
@@ -282,29 +282,14 @@ static float	_compute_Cx(float mach)
 	if (mach < 1.0f)	/* mach [0.6 - 1] -> 1-2.2*base */
 		return (BASE_CX * (1 + (-1.8f + 3 * mach)));
 	if (mach < 2.0f)	/* mach [1 - 2] -> 2.2-1.8*base */
-		return (BASE_CX * (1 + (1.3f - 0.2 * mach)));
+		return (BASE_CX * (1 + (1.3f - 0.2f * mach)));
 	else				/* mach > 2 -> 1.8*base */
 		return (BASE_CX * 1.8f);
 }
 
-/* compute air density from altitude, up to karman line */
-static float	_compute_q(float altitude)
-{
-	if (altitude < 11000.0f)	/* 1.225 - 0.36391 */
-		return (1.225 - (altitude / 11000) * 0.86109);
-	if (altitude < 20000.0f)	/* 0.36391 - 0.08803 */
-		return (0.36391 - ((altitude - 11000) / 9000) * 0.27588+-);
-	if (altitude < 32000.0f)	/* 0.08803 - 0.01322 */
-		return (1.225);
-	if (altitude < 47000.0f)	/* 0.01322 - 0.00143 */
-		return (1.225);
-	if (altitude < 47000.0f)	/* 0.00143 - 0.00086 */
-		return (1.225);
-	if (altitude < 100000.0f)	/* 0.00086 - 0 */
-		return (1.225);
-	else						/* above Karman line : q = 0 */
-		return (0.0f);
-}
+/* compute air density from altitude, using Scale height (7.6km) */
+static float	_compute_rho(float altitude)
+{ return (AIR_DENSITY * std::exp(-altitude / 7600.0f)); }
 
 static void		_compute_drag(Object &obj, float delta)
 {
@@ -321,10 +306,10 @@ static void		_compute_drag(Object &obj, float delta)
 	v2 = Utils::square(obj.velocity[0]) + Utils::square(obj.velocity[1]) +
 	Utils::square(obj.velocity[2]);
 	v = std::sqrt(v2);
-	q = 0.5 * AIR_DENSITY * v2;
+	q = 0.5f * _compute_rho(obj.position[1]) * v2;
 
 	/* Rx = q * A * Cx */
-	area = Utils::square(obj.radius) * M_PI;
+	area = Utils::square(obj.radius) * (float)M_PI;
 	mach = v / (20.05f * std::sqrtf(AIR_TEMPERATURE));
 	drag = _compute_Cx(mach) * area * q;
 	a = drag / obj.mass;
@@ -358,7 +343,7 @@ void			Game::_update_objects(float delta, const Keys &key)
 	obj_id = 0;
 	for (Object &obj : this->obj)
 	{
-		obj.velocity[1] -= key.gravity * delta; /////////////////////////////////////////////////////////////////////////////
+		obj.velocity[1] -= key.gravity * delta;
 
 		/* collisions */
 		Collider::collide_floor(obj);
