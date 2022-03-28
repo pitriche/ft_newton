@@ -18,16 +18,37 @@
 # define OPENGL_VERSION_MAJOR	4
 # define OPENGL_VERSION_MINOR	1
 
-# define WIN_TITLE		"The apple doesn't fall far from the tree"
+# define WIN_TITLE		"BoWlz' sim"
 # define WIN_SIZEX		1920
 # define WIN_SIZEY		1080
 # define WIN_POSX		100
 # define WIN_POSY		50
 
+
+// ADD WIND !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// on right click
+// make cool feature list
+
+/*
+	Cool features list:
+	-Lots of objects (>1000)
+	-Time stop and slow
+	-Locked / Unlocked camera
+	-Gravity change
+	-Throw fast / heavy objects
+	-Auto throw
+	-Size and number thrown
+	-Destroy distance
+	-Drag, air temperature and mach number
+	-Wind
+	-Pool
+	-Stability !
+*/
+
 /* ########################################################################## */
 
-/* they don't work. I tried hard but missed time */
-# define USE_ROTATIONS			false
+/* they don't work. I tried hard */
+// # define USE_ROTATIONS
 
 /* ########################################################################## */
 

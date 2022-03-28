@@ -14,6 +14,7 @@
 #include <cmath>		/* sqrt */
 #include <cstdlib>		/* rand */
 #include "Collider.hpp"	/* all collisions */
+#include "Utils.hpp"	/* square */
 
 Game::Game(void) { }
 Game::~Game(void) { }
@@ -39,10 +40,6 @@ static void	_add_cube(std::vector<Object> &list, vec3 position, vec3 dimension,
 	list.push_back(tmp);
 }
 
-/* add axis aligned, immobile cube of mass 1 */
-static void	_add_cube(std::vector<Object> &list, vec3 position, float side)
-{ _add_cube(list, position, {side, side, side}, {0.0f, 0.0f, 0.0f}, 1.0f); }
-
 static void	_add_sphere(std::vector<Object> &list, vec3 position, float diameter,
 	float mass)
 {
@@ -59,7 +56,43 @@ static void	_add_sphere(std::vector<Object> &list, vec3 position, float diameter
 	list.push_back(tmp);
 }
 
-void	Game::init(void)
+/* push a cube of spheres */
+static void	init_pile(std::vector<Object> &list, unsigned mult, float spacing, float size)
+{
+	for (unsigned k = 0; k < mult; ++k)
+		for (unsigned j = 0; j < mult; ++j)
+			for (unsigned i = 0; i < mult; ++i)
+				_add_sphere(list, {k * spacing, j * spacing + 0.5f, i * spacing}, size, 1000);
+}
+
+
+static void	init_pool(std::vector<Object> &list, vec3 position)
+{
+	/* 10000 tons each */
+	_add_cube(list, {position[0], 2, position[2] + 5}, {11, 4, 1},
+		{0, 0, 0}, 10000000);
+	_add_cube(list, {position[0], 2, position[2] - 5}, {11, 4, 1},
+		{0, 0, 0}, 10000000);
+	_add_cube(list, {position[0] + 5, 2, position[2]}, {1, 4, 9},
+		{0, 0, 0}, 10000000);
+	_add_cube(list, {position[0] - 5, 2, position[2]}, {1, 4, 9},
+		{0, 0, 0}, 10000000);
+}
+
+static void	init_tower(std::vector<Object> &list, vec3 position)
+{
+	/* 100 kg each */
+	position[1] = 1;
+	_add_cube(list, position, {2, 2, 2}, {0, 0, 0}, 100);
+	position[1] = 3;
+	_add_cube(list, position, {1.9f, 2, 1.9f}, {0, 0, 0}, 100);
+	position[1] = 5;
+	_add_cube(list, position, {1.8f, 2, 1.8f}, {0, 0, 0}, 100);
+	position[1] = 7;
+	_add_cube(list, position, {1.7f, 2, 1.7f}, {0, 0, 0}, 100);
+}
+
+void		Game::init(void)
 {
 	Object	tmp;
 
@@ -78,82 +111,22 @@ void	Game::init(void)
 	_add_cube(this->sling, {0, 0, -1.1f}, {0.75f, 0.40f, 0.2f}, {0, 0, 0}, 1); /* pad */
 
 	/* objects */
+	init_pile(this->obj, 8, 6.0f, 5.0f);
 
-	// const int MULT = 8;
-	// for (unsigned k = 0; k < MULT; ++k) for (unsigned j = 0; j < MULT; ++j) for (unsigned i = 0; i < MULT; ++i)
-	// {
-	// 	// _add_cube(this->obj, {k * 1.0f + 5.0f, j * 1.0f + 0.5f, i * 1.0f + 2.0f}, 0.5f);
-	// 	_add_sphere(this->obj, {k * -5.0f - 5.0f, j * 6.9f + 0.5f, i * 5.0f}, 5, 10);
-	// }
-	// /* cardinal boxes */
-	// _add_cube(this->obj, {5, 5, 0}, {0.5f, 2, 0.5f}, {0, 0, 1.57f}, 1);
-	// _add_cube(this->obj, {0, 5, 5}, {0.2f, 4, 0.2f}, {1.57f, 0, 0}, 1);
-	// _add_cube(this->obj, {0, 5, 0}, {0.6f, 3, 0.6f}, {0, 0, 0}, 1);
+	/* twin cube towers */
+	init_tower(this->obj, {-5, 0, 5});
+	init_tower(this->obj, {-8, 0, 5});
 
-	// /* tower */
-	// _add_cube(this->obj, {0, 3, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
-	// this->obj.back().angular_velocity = {0, -10, 0};
-	// _add_cube(this->obj, {0, 5, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
-	// _add_cube(this->obj, {0, 7, -5}, {1, 1, 1}, {0.615f, 0, (float)M_PI_4}, 1);
-	// this->obj.back().angular_velocity = {0, 10, 0};
-	// _add_sphere(this->obj, {0, 9, -5}, 1, 1.5f);
+	/* piscine a boules */
+	init_pool(this->obj, {-10, 0, 20});
 
-	// /* flat cube arch */
-	// _add_cube(this->obj, {-5, 1, 5}, {2, 2, 2}, {0, 0, 0}, 100);
-	// _add_cube(this->obj, {-5, 3, 5}, {1.9f, 2, 1.9f}, {0, 0, 0}, 100);
-	// _add_cube(this->obj, {-5, 5, 5}, {1.8f, 2, 1.8f}, {0, 0, 0}, 100);
-	// _add_cube(this->obj, {-5, 7, 5}, {1.7f, 2, 1.7f}, {0, 0, 0}, 100);
-
-	// _add_cube(this->obj, {-8, 1, 5}, {2, 2, 2}, {0, 0, 0}, 100);
-	// _add_cube(this->obj, {-8, 3, 5}, {1.9f, 2, 1.9f}, {0, 0, 0}, 100);
-	// _add_cube(this->obj, {-8, 5, 5}, {1.8f, 2, 1.8f}, {0, 0, 0}, 100);
-	// _add_cube(this->obj, {-8, 7, 5}, {1.7f, 2, 1.7f}, {0, 0, 0}, 100);
-
-
-
-	// /* heavy and light cubes and spheres */
-	// _add_cube(this->obj, {-5, 3, -15}, {4, 4, 4}, {0, 0, 0}, 100);
-	// _add_cube(this->obj, {5, 3, -15}, {3.5f, 3.5f, 3.5f}, {0, 0, 0}, 0.1f);
-
-	// _add_sphere(this->obj, {-3, 5.95f, 5}, 2, 1);
-	// this->obj.back().velocity = {5, 0, 0};
-	// _add_sphere(this->obj, {3, 4, 5}, 2, 1);
-	// this->obj.back().velocity = {0, 0, 0};
-
-
-	// _add_sphere(this->obj, {-10, 8, 10}, 2, 2);
-	// this->obj.back().velocity = {1, 0, 0};
-	// _add_sphere(this->obj, {10, 8, 10}, 2, 1);
-	// this->obj.back().velocity = {-1, 0, 0};
-
-	// _add_cube(this->obj, {0, 5, 6}, {2, 3, 4}, {-0.7, 0.5, 0.5}, 10);
-	// this->obj.back().angular_velocity = {0, 1, 2};
-	// _add_sphere(this->obj, {1, 15, 6}, 1.5f, 10);
-
-	// /* piscine a boules */
-	// _add_cube(this->obj, {0, 2, 5}, {11, 4, 1}, {0, 0, 0}, 1000000);
-	// _add_cube(this->obj, {0, 2, -5}, {11, 4, 1}, {0, 0, 0}, 1000000);
-	// _add_cube(this->obj, {5, 2, 0}, {1, 4, 9}, {0, 0, 0}, 1000000);
-	// _add_cube(this->obj, {-5, 2, 0}, {1, 4, 9}, {0, 0, 0}, 1000000);
-
-	// _add_cube(this->obj, {0, 1.5, 2}, {2, 2, 2}, {(float)-M_PI_4, 0, (float)-M_PI_2}, 1000);
-	// this->obj[0].angular_velocity = {1, 2, 0.3};
-	
-	// _add_sphere(this->obj, {1, 15, 6}, 1.5f, 10);
-	// _add_cube(this->obj, {0, 7.5, 2}, {1, 1, 1}, {0, 0, 0}, 100);
-	// _add_cube(this->obj, {0.117f, 1.542f, 1.255f}, {1, 1, 1}, {0, 0, 0}, 100);
-
-
-	// _add_cube(this->obj, {0, 5.5f, 0}, {1, 1, 1}, {1020, 200, 3000}, 2000);
-	_add_cube(this->obj, {0, 1.2f, 0}, {1, 3, 5}, {0.3f, 0, 0}, 2000);
-	this->obj.back().angular_velocity = {0, 0, 0};
+	/* angled cube */
+	_add_cube(this->obj, {-10, 2, -10}, {3, 2, 1}, {0, 1, 0}, 100);
 }
 
 /* ########################################################################## */
 /* #####################		Camera update			##################### */
 /* ########################################################################## */
-#include "Line.hpp" /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#include "Utils.hpp" ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void		Game::_update_camera(float delta, const Keys &key)
 {
@@ -213,7 +186,6 @@ void		Game::_update_camera(float delta, const Keys &key)
 	// Utils::debug_draw_line(this->debug, line);
 	// std::cout << _cube_line_collision(this->obj[0], line) << "<< moving, line " << line << "\n";
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 	this->pos_locked += key.mouse_scroll / 1000.0f * SCROLL_SENSITIVITY;
 	if (this->pos_locked < 0)
@@ -319,9 +291,43 @@ static void		_compute_drag(Object &obj, float delta)
 	// std::cout << "Mach number=" << mach << " | Cx=" << _compute_Cx(mach) << std::endl;
 }
 
+
+static void		_compute_wind(Object &obj, const vec3 &wind_dir, float wind_speed,
+	float delta)
+{
+	float	q;			/* dynamic pressure */
+	float	mach;		/* mach number */
+	float	area;		/* object surface area */
+	float	drag;		/* drag in newtons */
+	float	a;			/* acceleration due to wind drag */
+
+	/* q= 1/2 * rho * V^2 */
+	q = 0.5f * _compute_rho(obj.position[1]) * Utils::square(wind_speed);
+
+	/* Rx = q * A * Cx */
+	area = Utils::square(obj.radius) * (float)M_PI;
+	mach = wind_speed / (20.05f * std::sqrtf(AIR_TEMPERATURE));
+	drag = _compute_Cx(mach) * area * q;
+	a = drag / obj.mass;
+
+	obj.velocity += wind_dir * a * delta;
+	std::cout << "Wind Mach number=" << mach << " | Cx=" << _compute_Cx(mach) << std::endl;
+}
+
 void			Game::_update_objects(float delta, const Keys &key)
 {
-	int	obj_id;
+	int		obj_id;
+	vec3	wind_dir;
+
+	/* number object actions */
+	if (key.init_pile)
+		init_pile(this->obj, 6, 3.1f, 3.0f);
+	if (key.init_pool)
+		init_pool(this->obj, this->pos);
+	if (key.init_tower)
+		init_tower(this->obj, this->pos);
+	if (key.reset_all)
+		this->obj.clear();
 
 	/* sort by Z */
 	std::sort(this->obj.begin(), this->obj.end(), _compare_z);
@@ -333,11 +339,15 @@ void			Game::_update_objects(float delta, const Keys &key)
 			this->obj.erase(this->obj.begin() + i);
 
 	/* compute cube points and apply drag */
+	wind_dir = {0.0f, 0.0f, 1.0f};
+	vec3_rotate(wind_dir, this->look_pitch, this->look_yaw, 0);
 	for (Object &obj : this->obj)
 	{
 		if (obj.type == Cube)
 			obj.compute_points();
 		_compute_drag(obj, delta);
+		if (key.mouse_right)
+			_compute_wind(obj, wind_dir, 50, delta);
 	}
 
 	obj_id = 0;
@@ -346,7 +356,7 @@ void			Game::_update_objects(float delta, const Keys &key)
 		obj.velocity[1] -= key.gravity * delta;
 
 		/* collisions */
-		Collider::collide_floor(obj);
+		Collider::collide_floor(obj, key.mouse_right);
 		for (unsigned i = (unsigned)obj_id + 1; i < this->obj.size(); ++i)
 			Collider::collide_object(obj, this->obj[i]);
 		++obj_id;

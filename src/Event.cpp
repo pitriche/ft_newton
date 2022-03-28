@@ -43,8 +43,9 @@ void	Event::_mousechange(Uint8 button, bool button_state)
 			break;
 		case (SDL_BUTTON_RIGHT) :
 			this->key.mouse_right = button_state;
-			this->key.object_thrown = button_state;
-			this->key.object_type = 0;	/* Cube */
+			/* throw cube */
+			// this->key.object_thrown = button_state;
+			// this->key.object_type = 0;	/* Cube */
 			break;
 	}
 }
@@ -54,12 +55,12 @@ void	Event::_keychange(SDL_Keycode kc, bool key_state)
 	switch (kc)		/* key press and release */
 	{
 		case (SDLK_ESCAPE) : exit(0); break;
-		case (SDLK_w) : this->key.w = key_state; break;
-		case (SDLK_a) : this->key.a = key_state; break;
-		case (SDLK_s) : this->key.s = key_state; break;
-		case (SDLK_d) : this->key.d = key_state; break;
-		case (SDLK_LSHIFT) : this->key.lshift = key_state; break;
-		case (SDLK_SPACE) : this->key.space = key_state; break;
+		case (SDLK_w) : this->key.w = key_state; break;				/* camera horizontal displacement */
+		case (SDLK_a) : this->key.a = key_state; break;				/* | */
+		case (SDLK_s) : this->key.s = key_state; break;				/* | */
+		case (SDLK_d) : this->key.d = key_state; break;				/* | */
+		case (SDLK_LSHIFT) : this->key.lshift = key_state; break;	/* camera vertical displacement */
+		case (SDLK_SPACE) : this->key.space = key_state; break;		/* | */
 	}
 
 	if (!key_state)	/* only on key press */
@@ -78,19 +79,23 @@ void	Event::_keychange(SDL_Keycode kc, bool key_state)
 		case (SDLK_u) : this->key.object_size *= 1.2f; break;
 		case (SDLK_j) : this->key.object_size *= 0.9f; break;
 		case (SDLK_m) : this->key.object_size = DEFAULT_OBJ_SIZE; break;
-		case (SDLK_EQUALS) : this->key.max_distance += 50.0f; break;
-		case (SDLK_MINUS) : this->key.max_distance -= 50.0f; break;
-		case (SDLK_BACKSPACE) : this->key.max_distance = INFINITY; break;
-		case (SDLK_RIGHTBRACKET) : this->key.gravity *= 1.1f; break;
-		case (SDLK_LEFTBRACKET) : this->key.gravity *= 0.9f; break;
-		case (SDLK_BACKSLASH) : this->key.gravity = DEFAULT_GRAVITY; break;
-		case (SDLK_PERIOD) : this->key.time_speed *= 1.5f; break;
-		case (SDLK_COMMA) : this->key.time_speed *= 0.5f; break;
-		case (SDLK_SLASH) : this->key.time_speed = DEFAULT_TIME; break;
-		case (SDLK_RSHIFT) : this->key.time_speed = 1e-20f; break;
-		case (SDLK_q) : this->key.object_auto ^= 1; break;
-		case (SDLK_z) : this->key.debug_display ^= 1; break;
-		case (SDLK_e) : this->key.debug_impact ^= 1; break;
+		case (SDLK_EQUALS) : this->key.max_distance += 50.0f; break;		/* object despawn distance */
+		case (SDLK_MINUS) : this->key.max_distance -= 50.0f; break;			/* | */
+		case (SDLK_BACKSPACE) : this->key.max_distance = INFINITY; break;	/* | */
+		case (SDLK_RIGHTBRACKET) : this->key.gravity *= 1.1f; break;		/* gravity control */
+		case (SDLK_LEFTBRACKET) : this->key.gravity *= 0.9f; break;			/* | */
+		case (SDLK_BACKSLASH) : this->key.gravity = DEFAULT_GRAVITY; break;	/* | */
+		case (SDLK_PERIOD) : this->key.time_speed *= 1.5f; break;			/* accelerate time */
+		case (SDLK_COMMA) : this->key.time_speed *= 0.5f; break;			/* slow down time */
+		case (SDLK_SLASH) : this->key.time_speed = DEFAULT_TIME; break;		/* normal time */
+		case (SDLK_RSHIFT) : this->key.time_speed = 1e-20f; break;			/* stop time (the world) */
+		case (SDLK_q) : this->key.object_auto ^= 1; break;					/* throw object each frame */
+		case (SDLK_z) : this->key.debug_display ^= 1; break;				/* wireframe, useless */
+		case (SDLK_e) : this->key.debug_impact ^= 1; break;					/* display hits and angular impulses */
+		case (SDLK_1) : this->key.init_pile ^= 1; break;					/* add a pile of spheres */
+		case (SDLK_2) : this->key.init_pool ^= 1; break;					/* add a nice square */
+		case (SDLK_3) : this->key.init_tower ^= 1; break;					/* add 2 piles of cubes */
+		case (SDLK_0) : this->key.reset_all ^= 1; break;					/* remove all objects */
 	}
 	if ((kc == SDLK_EQUALS || kc == SDLK_MINUS) &&
 		isinf(this->key.max_distance))
@@ -112,6 +117,12 @@ void	Event::update(void)
 	this->key.mouse_y = false;
 	if (!this->key.object_auto)
 		this->key.object_thrown = false;
+
+	this->key.init_pile = false;
+	this->key.init_pool = false;
+	this->key.init_tower = false;
+	this->key.reset_all = false;
+
 	while (SDL_PollEvent(&event))
 	{
 		if (event.type == SDL_QUIT)

@@ -18,7 +18,7 @@
 namespace Collider
 {
 	/* collide ground: plane at [0,0,0] with Y axis as normal */
-	void	collide_floor(Object &obj);
+	void	collide_floor(Object &obj, bool wind);
 	void	collide_object(Object &obj1, Object &obj2);
 }
 

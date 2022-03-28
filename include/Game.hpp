@@ -40,6 +40,8 @@ struct Game
 		float			look_yaw;	/* applied before pitch */
 		float			look_pitch;
 
+		float			wind_speed;	/* wind speed in m/s */
+
 		std::vector<Object>	obj;	/* Game objects */
 		std::vector<Object>	debug;	/* Debug spheres */
 		std::vector<Object>	sling;	/* catapult 3d model */

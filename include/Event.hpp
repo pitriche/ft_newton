@@ -47,6 +47,11 @@ struct Keys
 
 	bool		debug_display;
 	bool		debug_impact;	/* display impacts and rotations */
+
+	bool		init_pile;		/* add pile of spheres */
+	bool		init_pool;		/* add bowl pool */
+	bool		init_tower;		/* add cube tower */
+	bool		reset_all;		/* remove all objects */
 };
 
 /*

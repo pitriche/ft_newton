@@ -16,43 +16,45 @@
 #include <cmath>		/* abs */
 #include "All.hpp"		/* to get delta time for arbitrary operations */
 
-/* compute angular velocity change, return the remaining amount of impulse */
-static float	_compute_rotation(Object &cube, const vec3 &normal, const vec3
-	&impact, float impulse)
-{
-	vec3	axis;		/* rotation axis of the collision */
-	float	dist;		/* distance of the moment of force's arm */
-	float	angular_impulse;
-	float	moment_of_inertia;
-	float	d_omega;	/* angular velocity change */
-	float	conversion;	/* ratio of impulse converted to rotation energy */
-
-	axis = vec3_cross_product(normal, cube.position - impact);
-	dist = vec3_length(axis); /* can be negative i think */ /* no it can't be negative you absolute buffoon */
-	conversion = dist / Utils::max3(cube.dimension);
-
-
-	if (all.event.key.debug_impact)
+#ifdef USE_ROTATIONS
+	/* compute angular velocity change, return the remaining amount of impulse */
+	static float	_compute_rotation(Object &cube, const vec3 &normal, const vec3
+		&impact, float impulse)
 	{
-		Utils::add_sphere(all.game.debug, impact, 0.7f);
-		Utils::debug_draw_line(all.game.debug, Line(cube.position, cube.position + axis * 10));;
-	}
-	// std::cout << "Impact at " << impact << " axis " << vec3_normalize(axis) << std::endl;
-	// std::cout << "Impact normal " << normal << std::endl;
-	// std::cout << "Conversion " << (1.0f - conversion) * 100.0f << '%' << std::endl;
-	if (dist == 0)	/* if distance is 0, there is no rotation */
-		return (1.0f);
-	angular_impulse = impulse * dist;
-	moment_of_inertia = cube.mass * Utils::square(cube.radius * 2) / 6.0f;	////////////////////////////////////////////////////////////// find moment of inertia
-	d_omega = angular_impulse / moment_of_inertia;
-	cube.angular_velocity += vec3_normalize(axis) * d_omega;	/* apply */
+		vec3	axis;		/* rotation axis of the collision */
+		float	dist;		/* distance of the moment of force's arm */
+		float	angular_impulse;
+		float	moment_of_inertia;
+		float	d_omega;	/* angular velocity change */
+		float	conversion;	/* ratio of impulse converted to rotation energy */
 
-	/* omega damping */
-	// std::cout << "Impact impulse euler vector" << vec3_normalize(axis) * d_omega << std::endl;
-	// std::cout << "Impact delta omega " << d_omega << std::endl;
-	cube.angular_velocity *= 1.0f;
-	return (1.0f - conversion);
-}
+		axis = vec3_cross_product(normal, cube.position - impact);
+		dist = vec3_length(axis); /* can be negative i think */ /* no it can't be negative you absolute buffoon */
+		conversion = dist / Utils::max3(cube.dimension);
+
+		if (all.event.key.debug_impact)
+		{
+			Utils::add_sphere(all.game.debug, impact, 0.7f);
+			Utils::debug_draw_line(all.game.debug, Line(cube.position, cube.position + axis * 10));;
+		}
+		// std::cout << "Impact at " << impact << " axis " << vec3_normalize(axis) << std::endl;
+		// std::cout << "Impact normal " << normal << std::endl;
+		// std::cout << "Conversion " << (1.0f - conversion) * 100.0f << '%' << std::endl;
+		if (dist == 0)	/* if distance is 0, there is no rotation */
+			return (1.0f);
+		angular_impulse = impulse * dist;
+		moment_of_inertia = cube.mass * Utils::square(cube.radius * 2) / 6.0f;	/* arbitrary formula */
+		d_omega = angular_impulse / moment_of_inertia;
+		cube.angular_velocity += vec3_normalize(axis) * d_omega;				/* apply */
+
+		/* omega damping */
+		// std::cout << "Impact impulse euler vector" << vec3_normalize(axis) * d_omega << std::endl;
+		// std::cout << "Impact delta omega " << d_omega << std::endl;
+		cube.angular_velocity *= 1.0f;
+		// return (1.0f - conversion);
+		return (1.0f);
+	}
+#endif
 
 /* collision linear velocity change, then angular */
 static void		_compute_collision(Object &obj1, Object &obj2, const vec3
@@ -78,11 +80,18 @@ static void		_compute_collision(Object &obj1, Object &obj2, const vec3
 	obj2.rest = false;
 	conversion1 = 1.0f;
 	conversion2 = 1.0f;
-	if (obj1.type == Cube)
-		conversion1 = _compute_rotation(obj1, normal, impact, Dp_scale / 2.0f);
-	if (obj2.type == Cube)
-		conversion2 = _compute_rotation(obj2, normal * -1.0f, impact, Dp_scale
-			/ 2.0f);
+
+	#ifdef USE_ROTATIONS
+		if (obj1.type == Cube)
+			conversion1 = _compute_rotation(obj1, normal, impact, Dp_scale / 2.0f);
+		if (obj2.type == Cube)
+			conversion2 = _compute_rotation(obj2, normal * -1.0f, impact, Dp_scale
+				/ 2.0f);
+	#endif
+	#ifndef USE_ROTATIONS
+		(void)impact;
+	#endif
+
 	obj1.velocity += Dp * conversion1 / obj1.mass;
 	obj2.velocity -= Dp * conversion2 / obj2.mass;
 }
@@ -110,10 +119,10 @@ static void		_solve_collision(Object &obj1, Object &obj2, const vec3 &solution)
 /* #########################	Floor collisions	######################### */
 /* ########################################################################## */
 
-static void	_sphere_floor_collision(Object &obj)
+static void	_sphere_floor_collision(Object &obj, bool wind)
 {
-	/* inelastic collision and ground friction */
-	if (abs(obj.velocity[1]) <= INELASTIC_SPEED)
+	/* inelastic collision and ground friction, if no wind */
+	if (abs(obj.velocity[1]) <= INELASTIC_SPEED && !wind)
 	{
 		obj.rest = true;
 		obj.position[1] = obj.radius;
@@ -128,7 +137,7 @@ static void	_sphere_floor_collision(Object &obj)
 	obj.velocity *= COEFF_OF_RESTITUTION;
 }
 
-static void	_cube_floor_collision(Object &obj)
+static void	_cube_floor_collision(Object &obj, bool wind)
 {
 	float	above_ground;
 	vec3	impact;
@@ -144,10 +153,12 @@ static void	_cube_floor_collision(Object &obj)
 	if (above_ground > 0.001f)	/* to avoid rounding errors */
 		return ;
 
-	_compute_rotation(obj, {0, 1, 0}, impact, -obj.velocity[1] * obj.mass * 1);
+	#ifdef USE_ROTATIONS
+		_compute_rotation(obj, {0, 1, 0}, impact, -obj.velocity[1] * obj.mass * 1);
+	#endif
 
-	/* inelastic collision and ground friction */
-	if (abs(obj.velocity[1]) <= INELASTIC_SPEED)
+	/* inelastic collision and ground friction, if no wind */
+	if (abs(obj.velocity[1]) <= INELASTIC_SPEED && !wind)
 	{
 		obj.rest = true;
 		obj.velocity[1] = 0.0f;
@@ -176,9 +187,9 @@ static bool	_cube_line_collision(Object &cube, Line line)
 
 	/* axis align the cube, with lower, closest left cornet at origin */
 	line.origin -= cube.position;
-	vec3_rotate_inverse(line.origin, cube.angular_position);///////////////////////////////////////////////////////////////////////here
+	vec3_rotate_inverse(line.origin, cube.angular_position);
 	line.origin += cube.dimension * 0.5f;
-	vec3_rotate_inverse(line.dir, cube.angular_position);///////////////////////////////////////////////////////////////////////here
+	vec3_rotate_inverse(line.dir, cube.angular_position);
 
 	for (unsigned axis = 0; axis < 3; ++axis)
 	{
@@ -263,7 +274,7 @@ static bool	_cube_cube_collision_type0(Object &cube, Object &cube2)
 	for (unsigned i = 0; i < 8; ++i)
 	{
 		relative_pos_abs = cube2.points[i] - cube.position;
-		vec3_rotate_inverse(relative_pos_abs, cube.angular_position); /////////////////////////////////////////////here
+		vec3_rotate_inverse(relative_pos_abs, cube.angular_position);
 		for (unsigned axis_vec = 0; axis_vec < 3; ++axis_vec)
 			axis_positive[axis_vec] = (relative_pos_abs[axis_vec] >= 0.0f);
 		for (float &f : relative_pos_abs)
@@ -274,7 +285,7 @@ static bool	_cube_cube_collision_type0(Object &cube, Object &cube2)
 			axis = Utils::max3_id(intersect);
 			normal = cube.normals[axis] * (axis_positive[axis] ? 1.0f : -1.0f);
 			_solve_collision(cube, cube2, normal * -intersect[axis]);
-			_compute_collision(cube, cube2, normal, {0, 0, 0}); ///////////////////////////////////////////////// impact
+			_compute_collision(cube, cube2, normal, {0, 0, 0});
 			cube2.compute_points();	/* update points after each collision */
 			collision = true;
 		}
@@ -459,15 +470,15 @@ static void	_sphere_sphere_collision(Object &obj1, Object &obj2, vec3 solution)
 
 namespace Collider
 {
-	void	collide_floor(Object &obj)
+	void	collide_floor(Object &obj, bool wind)
 	{
 		/* preliminary check */
 		if (obj.position[1] - obj.radius <= 0)
 		{
 			switch (obj.type)
 			{
-				case (Sphere) : _sphere_floor_collision(obj); break;
-				case (Cube) : _cube_floor_collision(obj); break;
+				case (Sphere) : _sphere_floor_collision(obj, wind); break;
+				case (Cube) : _cube_floor_collision(obj, wind); break;
 			}
 		}
 	}
