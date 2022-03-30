@@ -13,7 +13,7 @@
 #include "Collider.hpp"
 #include "Utils.hpp"	/* square */
 #include "Line.hpp"		/* Line */
-#include <cmath>		/* abs */
+#include <cmath>		/* abs, sqrtf */
 #include "All.hpp"		/* to get delta time for arbitrary operations */
 
 #ifdef USE_ROTATIONS
@@ -119,10 +119,10 @@ static void		_solve_collision(Object &obj1, Object &obj2, const vec3 &solution)
 /* #########################	Floor collisions	######################### */
 /* ########################################################################## */
 
-static void	_sphere_floor_collision(Object &obj, bool wind)
+static void	_sphere_floor_collision(Object &obj, float g)
 {
 	/* inelastic collision and ground friction, if no wind */
-	if (abs(obj.velocity[1]) <= INELASTIC_SPEED && !wind)
+	if (obj.velocity[1] >= -INELASTIC_SPEED && obj.velocity[1] <= 0)
 	{
 		obj.rest = true;
 		obj.position[1] = obj.radius;
@@ -132,12 +132,17 @@ static void	_sphere_floor_collision(Object &obj, bool wind)
 	}
 
 	/* partially elastic collision */
-	obj.velocity[1] *= -1;
-	obj.position[1] = obj.radius;
-	obj.velocity *= COEFF_OF_RESTITUTION;
+	if (obj.velocity[1] < 0)
+	{
+		/* remove added energy before energy loss (and direction inversion) */
+		obj.velocity[1] += (float)M_SQRT2 * sqrtf(g * (obj.radius - obj.position[1]))
+			* 0.2f;	/* yeah.. why is this term ? i don't know. It's needed */
+		obj.velocity[1] *= -COEFF_OF_RESTITUTION;	/* rebound, lose energy */
+		obj.position[1] = obj.radius;
+	}
 }
 
-static void	_cube_floor_collision(Object &obj, bool wind)
+static void	_cube_floor_collision(Object &obj, float g)
 {
 	float	above_ground;
 	vec3	impact;
@@ -158,7 +163,7 @@ static void	_cube_floor_collision(Object &obj, bool wind)
 	#endif
 
 	/* inelastic collision and ground friction, if no wind */
-	if (abs(obj.velocity[1]) <= INELASTIC_SPEED && !wind)
+	if (obj.velocity[1] >= -INELASTIC_SPEED && obj.velocity[1] <= 0)
 	{
 		obj.rest = true;
 		obj.velocity[1] = 0.0f;
@@ -166,8 +171,14 @@ static void	_cube_floor_collision(Object &obj, bool wind)
 	}
 
 	/* partially elastic collision */
-	obj.position[1] -= above_ground;
-	obj.velocity[1] *= -COEFF_OF_RESTITUTION;
+	if (obj.velocity[1] <= 0)
+	{
+		/* remove added energy before energy loss (and direction inversion) */
+		if (above_ground < 0) /* only if cube is strictly below ground */
+			obj.velocity[1] += (float)M_SQRT2 * sqrtf(g * -above_ground) * 0.2f;
+		obj.velocity[1] *= -COEFF_OF_RESTITUTION;	/* rebound, lose energy */
+		obj.position[1] -= above_ground;
+	}
 }
 
 /* ########################################################################## */
@@ -285,7 +296,8 @@ static bool	_cube_cube_collision_type0(Object &cube, Object &cube2)
 			axis = Utils::max3_id(intersect);
 			normal = cube.normals[axis] * (axis_positive[axis] ? 1.0f : -1.0f);
 			_solve_collision(cube, cube2, normal * -intersect[axis]);
-			_compute_collision(cube, cube2, normal, {0, 0, 0});
+			_compute_collision(cube, cube2, normal,
+				(cube.position + cube2.position) / 2.0); /* need the true impact coordonates */
 			cube2.compute_points();	/* update points after each collision */
 			collision = true;
 		}
@@ -319,7 +331,8 @@ static bool	_cube_cube_collision_type1(Object &cube, Object &cube2)
 			(all.time.delta / 1000000000.0f);
 
 			_solve_collision(cube, cube2, normal * solution);
-			_compute_collision(cube, cube2, normal, {0, 0, 0}); ///////////////////////////////////////////////// impact
+			_compute_collision(cube, cube2, normal,
+				(cube.position + cube2.position) / 2.0); /* need the true impact coordonates */
 			return (true);
 		}
 	}
@@ -470,15 +483,16 @@ static void	_sphere_sphere_collision(Object &obj1, Object &obj2, vec3 solution)
 
 namespace Collider
 {
-	void	collide_floor(Object &obj, bool wind)
+	/* G is needed to compute rebound added energy */
+	void	collide_floor(Object &obj, float g)
 	{
 		/* preliminary check */
 		if (obj.position[1] - obj.radius <= 0)
 		{
 			switch (obj.type)
 			{
-				case (Sphere) : _sphere_floor_collision(obj, wind); break;
-				case (Cube) : _cube_floor_collision(obj, wind); break;
+				case (Sphere) : _sphere_floor_collision(obj, g); break;
+				case (Cube) : _cube_floor_collision(obj, g); break;
 			}
 		}
 	}

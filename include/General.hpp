@@ -24,11 +24,6 @@
 # define WIN_POSX		100
 # define WIN_POSY		50
 
-
-// ADD WIND !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// on right click
-// make cool feature list
-
 /*
 	Cool features list:
 	-Lots of objects (>1000)
@@ -39,7 +34,7 @@
 	-Auto throw
 	-Size and number thrown
 	-Destroy distance
-	-Drag, air temperature and mach number
+	-Drag, air temperature, altitude and mach number
 	-Wind
 	-Pool
 	-Stability !
@@ -68,7 +63,7 @@
 # define MAX_DELTA				0.03f	/* maximum allowed frame duration */
 # define INELASTIC_SPEED		1.5f	/* ground inelastic threshold */
 # define ELASTIC_SPEED			1.0f	/* object elastic threshold */
-# define COEFF_OF_RESTITUTION	0.6f
+# define COEFF_OF_RESTITUTION	0.7f
 # define COEFF_OF_FRICTION		0.05f	/* speed decrease over a single frame */
 
 /* ########################################################################## */
@@ -80,6 +75,7 @@
 # define DEFAULT_GRAVITY	9.80665f
 # define DEFAULT_MAX_DIST	500.0f	/* value for inc/dec, default is +inf */
 # define DEFAULT_TIME		1.0f
+# define DEFAULT_WIND_SPEED	50.0f
 
 /* ########################################################################## */
 

@@ -311,7 +311,7 @@ static void		_compute_wind(Object &obj, const vec3 &wind_dir, float wind_speed,
 	a = drag / obj.mass;
 
 	obj.velocity += wind_dir * a * delta;
-	std::cout << "Wind Mach number=" << mach << " | Cx=" << _compute_Cx(mach) << std::endl;
+	// std::cout << "Wind Mach number=" << mach << " | Cx=" << _compute_Cx(mach) << std::endl;
 }
 
 void			Game::_update_objects(float delta, const Keys &key)
@@ -347,7 +347,7 @@ void			Game::_update_objects(float delta, const Keys &key)
 			obj.compute_points();
 		_compute_drag(obj, delta);
 		if (key.mouse_right)
-			_compute_wind(obj, wind_dir, 50, delta);
+			_compute_wind(obj, wind_dir, key.wind_speed, delta);
 	}
 
 	obj_id = 0;
@@ -356,7 +356,7 @@ void			Game::_update_objects(float delta, const Keys &key)
 		obj.velocity[1] -= key.gravity * delta;
 
 		/* collisions */
-		Collider::collide_floor(obj, key.mouse_right);
+		Collider::collide_floor(obj, key.gravity);
 		for (unsigned i = (unsigned)obj_id + 1; i < this->obj.size(); ++i)
 			Collider::collide_object(obj, this->obj[i]);
 		++obj_id;

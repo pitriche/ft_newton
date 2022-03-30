@@ -41,6 +41,8 @@ struct Keys
 	float		object_mass;
 	float		object_size;
 
+	float		wind_speed;
+
 	float		max_distance;	/* objects beyound this will be removed */
 	float		time_speed;
 	float		gravity;

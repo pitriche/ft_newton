@@ -21,6 +21,7 @@ Event::Event(void)
 	this->key.object_mass = DEFAULT_OBJ_MASS;
 	this->key.object_speed = DEFAULT_OBJ_SPEED;
 	this->key.object_size = DEFAULT_OBJ_SIZE;
+	this->key.wind_speed = DEFAULT_WIND_SPEED;
 	this->key.max_distance = INFINITY;
 	this->key.gravity = DEFAULT_GRAVITY;
 	this->key.time_speed = DEFAULT_TIME;
@@ -85,13 +86,16 @@ void	Event::_keychange(SDL_Keycode kc, bool key_state)
 		case (SDLK_RIGHTBRACKET) : this->key.gravity *= 1.1f; break;		/* gravity control */
 		case (SDLK_LEFTBRACKET) : this->key.gravity *= 0.9f; break;			/* | */
 		case (SDLK_BACKSLASH) : this->key.gravity = DEFAULT_GRAVITY; break;	/* | */
+		case (SDLK_x) : this->key.wind_speed *= 1.2f; break;				/* wind control */
+		case (SDLK_z) : this->key.wind_speed *= 0.8f; break;				/* | */
+		case (SDLK_c) : this->key.wind_speed = DEFAULT_WIND_SPEED; break;	/* | */
 		case (SDLK_PERIOD) : this->key.time_speed *= 1.5f; break;			/* accelerate time */
 		case (SDLK_COMMA) : this->key.time_speed *= 0.5f; break;			/* slow down time */
 		case (SDLK_SLASH) : this->key.time_speed = DEFAULT_TIME; break;		/* normal time */
 		case (SDLK_RSHIFT) : this->key.time_speed = 1e-20f; break;			/* stop time (the world) */
 		case (SDLK_q) : this->key.object_auto ^= 1; break;					/* throw object each frame */
-		case (SDLK_z) : this->key.debug_display ^= 1; break;				/* wireframe, useless */
-		case (SDLK_e) : this->key.debug_impact ^= 1; break;					/* display hits and angular impulses */
+		case (SDLK_e) : this->key.debug_display ^= 1; break;				/* wireframe, useless */
+		case (SDLK_o) : this->key.debug_impact ^= 1; break;					/* display hits and angular impulses */
 		case (SDLK_1) : this->key.init_pile ^= 1; break;					/* add a pile of spheres */
 		case (SDLK_2) : this->key.init_pool ^= 1; break;					/* add a nice square */
 		case (SDLK_3) : this->key.init_tower ^= 1; break;					/* add 2 piles of cubes */
@@ -155,6 +159,8 @@ void	Event::update(void)
 
 	std::cout << "Game status: " <<
 	this->key.time_speed * 100.0f << "% time speed, gravity: " <<
-	this->key.gravity << "m/s^2 (" << this->key.gravity / 9.80665f << "g), " <<
-	this->key.max_distance << "m maximum object distance" << std::endl << std::endl;
+	Utils::round(this->key.gravity, 2) << "m/s^2 (" <<
+	Utils::round(this->key.gravity / 9.80665f, 2) << "g), " <<
+	this->key.max_distance << "m maximum object distance" << std::endl;
+	std::cout << "Wind speed: " << this->key.wind_speed << "m/s" << std::endl << std::endl;
 }

@@ -148,7 +148,7 @@ static void	_draw_floor(void)
 {
 	Matrix	model;
 
-	model = Matrix().scale(10000, 0, 10000);
+	model = Matrix().scale(2000, 0, 3000);
 	glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(16 * sizeof(float)),
 		model.data(), GL_DYNAMIC_DRAW);
 	glUniform1i(all.gl.uniform.object_type, 2);
